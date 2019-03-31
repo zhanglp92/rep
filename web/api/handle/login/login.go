@@ -3,6 +3,7 @@ package login
 // desc: 登录
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	bb "github.com/zhanglp92/rep/base"
 	"github.com/zhanglp92/rep/config"
 	"github.com/zhanglp92/rep/web/api/handle"
+	"github.com/zhanglp92/rep/web/api/handle/base"
 )
 
 func init() {
@@ -37,7 +39,33 @@ func (a *Login) Init(config *config.Config) (err error) {
 
 // ServerHTTP ...
 func (a *Login) ServerHTTP(w http.ResponseWriter, r *http.Request) {
-	path := filepath.Join(bb.CurrentDir(), "html/login.gtpl")
+	var err error
+
+	switch r.Method {
+	case http.MethodGet:
+		a.apiGet(w, r)
+	case http.MethodPost:
+		if err = r.ParseForm(); err != nil {
+			a.apiPost(w, r)
+		}
+	default:
+		err = base.ErrMethod
+	}
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+}
+
+// Location ...
+func (a *Login) Location() string {
+	return a.location
+}
+
+// ---- internal ----
+
+func (a *Login) apiGet(w http.ResponseWriter, r *http.Request) {
+	path := filepath.Join(bb.CurrentDir(), "html/index.html")
 
 	t, err := template.ParseFiles(path)
 	if err != nil {
@@ -49,7 +77,7 @@ func (a *Login) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Location ...
-func (a *Login) Location() string {
-	return a.location
+func (a *Login) apiPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("username:", r.Form["username"])
+	fmt.Println("password:", r.Form["password"])
 }

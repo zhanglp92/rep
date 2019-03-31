@@ -38,8 +38,7 @@ func (a *Welcome) Init(config *config.Config) (err error) {
 
 // ServerHTTP ...
 func (a *Welcome) ServerHTTP(w http.ResponseWriter, r *http.Request) {
-
-	path := filepath.Join(bb.CurrentDir(), "html/welcome.gtpl")
+	path := filepath.Join(bb.CurrentDir(), "html/index.html")
 	a.Logger().Info("html", zap.String("path", path))
 
 	t, err := template.ParseFiles(path)

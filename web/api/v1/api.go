@@ -99,7 +99,9 @@ func (a *API) Register(r *route.Router) {
 
 	for _, h := range handle.Routers() {
 		a.Logger().Info("register", zap.String("location", h.Location()))
+
 		r.Get(h.Location(), h.ServerHTTP)
+		r.Post(h.Location(), h.ServerHTTP)
 	}
 }
 
