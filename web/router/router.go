@@ -51,6 +51,11 @@ func (r *Router) handle(h http.HandlerFunc) httprouter.Handle {
 	}
 }
 
+// ServeFiles a new ServeFiles route
+func (r *Router) ServeFiles(path string, root http.FileSystem) {
+	r.rtr.ServeFiles(r.prefix+path, root)
+}
+
 // Get registers a new GET route.
 func (r *Router) Get(path string, h http.HandlerFunc) {
 	r.rtr.GET(r.prefix+path, r.handle(h))

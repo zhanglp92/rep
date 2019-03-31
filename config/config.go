@@ -33,6 +33,14 @@ func New(path string) (c *Config, err error) {
 	return c, c.init()
 }
 
+// DataPath ...
+func (a *Config) DataPath() string {
+	if a == nil {
+		return ""
+	}
+	return a.cfg.Path.Data
+}
+
 // Web config
 func (a *Config) Web() *Web {
 	if a == nil {

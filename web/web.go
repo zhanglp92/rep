@@ -108,6 +108,9 @@ func (a *Web) initRouter() (err error) {
 		fmt.Fprintf(w, "Dmp is Ready.\n")
 	}))
 
+	router.ServeFiles("/lib/*filepath", http.Dir("lib"))
+	router.ServeFiles("/data/*filepath", http.Dir("data"))
+
 	return nil
 }
 

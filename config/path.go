@@ -5,4 +5,6 @@ package config
 // Path ...
 type Path struct {
 	Root string
+
+	Data string
 }
