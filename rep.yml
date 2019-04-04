@@ -1,5 +1,11 @@
 path:
-    Root: .
+    root: .
+
+    form: data/form.json
+
+    user: data/user.json
+
+    leveldb: data/leveldb
     
 web:
     addr: :7001

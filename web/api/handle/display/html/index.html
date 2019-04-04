@@ -1,127 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8" />
-        <title>Dashboard | Nadhif - Responsive Admin Template</title>
-        <link href="/rep/lib/bootstrap/dist/css/bootstrap.min.css"
-            rel="stylesheet" />
-        <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.css"
-            rel="stylesheet" />
-        <script src="/rep/lib/js/jquery-3.3.1.min.js"></script>
-        <script src="/rep/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/rep/lib/bootstrap-table/dist/bootstrap-table.js"></script>
-        <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
-        <script
-            src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard | Nadhif - Responsive Admin Template</title>
+    <link href="/rep/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.css" rel="stylesheet" />
+    <link href="/rep/lib/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
+    <link href="/rep/lib/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 
-    <style>
+    <script src="/rep/lib/node_modules/popper.js/dist/umd/popper.js"></script>
+    <script src="/rep/lib/js/jquery-3.3.1.min.js"></script>
+    <script src="/rep/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="/rep/lib/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/rep/lib/bootstrap-switch/src/js/bootstrap-switch.js"></script>
+    <!-- <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script> -->
+
+
+</head>
+
+<style>
     .table-hover,
-        #mytab {
-          width: 100%;
-        }
-        .like {
-          margin-right: 10px;
-        }
-    </style>
-    <body>
-        <table id="mytab" class="table-hover"></table>
-        <script>
-            $('#mytab').bootstrapTable({
-                url: '/rep/data/data1.json',
+    #mytab {
+        width: 100%;
+    }
 
-                sidePagination: "true", //分页方式：client客户端分页，server服务端分页（*）
-                uniqueId: "ID",
-                toolbar: '#toolbar',    //工具按钮用哪个容器
-                striped: true,      //是否显示行间隔色
-                cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                pagination: true,     //是否显示分页（*）
-                sortable: true,      //是否启用排序
-                sortOrder: "ID asc",     //排序方式
-                pageNumber: 1,      //初始化加载第一页，默认第一页
-                pageSize: 12,      //每页的记录行数（*）
-                pageList: [20, 50, 100, 150],  //可供选择的每页的行数（*）
-                queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
-                // 设置为 '' 在这种情况下传给服务器的参数为：pageSize,pageNumber
+    .like {
+        margin-right: 10px;
+    }
+</style>
 
-                //queryParams: queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
-                strictSearch: true,
-                //showColumns: true, //是否显示所有的列
-                showRefresh: true, //是否显示刷新按钮
-                minimumCountColumns: 2,    //最少允许的列数
-                clickToSelect: true,    //是否启用点击选中行
-                searchOnEnterKey: true,
-                search:true, //是否显示表格搜索
 
-                columns: [
-                    {
-                        title: 'ID',
-                        field: 'id',
-                        align: "center",
-                        valign: "middle",
-                        formatter: modify,
-                    },
-                    {
-                        field: 'type',
-                        title: '料型',
-                        align: "center",
-                        valign: "middle",
-                        sortable: true,
-                    },
-                    {
-                        field: 'colour',
-                        title: '颜色',
-                    },
-                    {
-                        field: 'opendirection',
-                        title: '开向',
-                    },
-                    {
-                        field: 'size',
-                        title: '下单尺寸',
-                    },
-                    {
-                        field: 'shape',
-                        title: '花型',
-                    },
-                    {
-                        field: 'glass',
-                        title: '玻璃',
-                    },
-                    {
-                        field: 'squaremeter',
-                        title: '平方米',
-                    },
-                    {
-                        field: 'priceunit',
-                        title: '单价',
-                    },
-                    {
-                        field: 'priceset',
-                        title: '单价/套',
-                    },
-                    {
-                        field: 'price',
-                        title: '合计',
-                    },
-                    {
-                        field: 'remarks',
-                        title: '客户特殊要求备注',
-                    },
-                ]
-            });
-            
-            function modify(value, row, index) {
-                //通过formatter可以自定义列显示的内容
-                //value：当前field的值，即id
-                //row：当前行的数据
-                var a = '<a href="/home/edit?id='+value+'" >修改</a>';
-                return a;
+<table id="mytab" class="table-hover"></table>
+
+<script>
+    $(function () {
+        $('#mySwitch input').bootstrapSwitch();
+    })
+
+
+    $('#mytab').bootstrapTable({
+        url: '/rep/api/v1/op?type=form&op=range',
+
+        uniqueId: "ID",
+        striped: true,      //是否显示行间隔色
+        cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,     //是否显示分页（*）
+        sortable: true,      //是否启用排序
+        sortOrder: "ID asc",     //排序方式
+        pageNumber: 1,      //初始化加载第一页，默认第一页
+        pageSize: 12,      //每页的记录行数（*）
+        pageList: [20, 50, 100, 150],  //可供选择的每页的行数（*）
+        queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
+        //queryParams: queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
+        showColumns: true, //是否显示所有的列
+        // showRefresh: true, //是否显示刷新按钮
+        minimumCountColumns: 2,    //最少允许的列数
+        // clickToSelect: true,    //是否启用点击选中行
+        search: true, //是否显示表格搜索
+        // strictSearch: true, // 严格搜索
+        showExport: true,
+        // clickEdit: true,
+        showPaginationSwitch: true,
+
+        // searchAlign: "left",//查询框对齐方式
+        // buttonsAlign: "left",//按钮对齐方式
+        searchOnEnterKey: true,//回车搜索
+        toolbar: "#toolbar",//指定工具栏
+        toolbarAlign: "right",//工具栏对齐方式,
+
+
+
+        onClickCell: function (field, value, row, $element) {
+            if (constField[field]) {
+                return
             }
 
+            $element.attr('contenteditable', true);
+            $element.blur(function () {
+                let newValue = $element.html();
+                if (value == newValue) {
+                    return
+                }
+                modifyForm(field, newValue, row)
+            });
+        },
 
-        </script>
-    </body>
+        columns: [
+            {
+                checkbox: true
+            },
+            {
+                title: 'ID',
+                field: 'id',
+                align: "center",
+                valign: "middle",
+            },
+            {
+                title: '客户',
+                field: 'user',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+                formatter: getName,
+            },
+            {
+                title: '电话',
+                field: 'user',
+                align: "center",
+                valign: "middle",
+                formatter: getPhone,
+                // visible 会影响可编译按钮位置
+                // visible: false,
+            },
+            {
+                field: 'type',
+                title: '料型',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'colour',
+                title: '颜色',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'opendirection',
+                title: '开向',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'size',
+                title: '下单尺寸',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'shape',
+                title: '花型',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'glass',
+                title: '玻璃',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'squaremeter',
+                title: '平方米',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'priceunit',
+                title: '单价',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'priceset',
+                title: '单价/套',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'price',
+                title: '合计',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'remarks',
+                title: '客户特殊要求备注',
+            },
+            {
+                field: 'op', title: '操作', align: 'center', valign: 'middle',
+                formatter: operation,
+            }
+        ]
+    });
+
+    function operation(value, row, index) {
+        del = '<a href="#" class="btn btn-info" onclick="del(' + row["id"] + ')">删除</a>'
+        return del
+    }
+
+    function getName(value, row, index) {
+        return '<a onclick="getUserInfo(' + value["id"] + ')">' + value["name"] + '</a>';
+    }
+
+    function getPhone(value, row, index) {
+        return value["phone"]
+    }
+
+    function del(id) {
+        url = "/rep/api/v1/op?type=form&op=del&id=" + id
+
+        $.ajax({
+            url: url,
+            success: function (data, status) {
+                if (status !== "success") {
+                    alert(data)
+                } else {
+                    alert("删除成功")
+                }
+            },
+            error: function (data) {
+                alert(data)
+            }
+        })
+    }
+
+    function getUserInfo(id) {
+        url = "/rep/api/v1/op?type=user&op=get&id=" + id
+
+        $.ajax({
+            url: url,
+            success: function (data) {
+                alert(data)
+            },
+            error: function (data) {
+                alert(data)
+            }
+        })
+    }
+
+    var constField = {
+        "user": true, "id": true
+    }
+
+    var fieldTy = {
+        "id": "int",
+        "userid": "int",
+        "type": "string",
+        "colour": "string",
+        "opendirection": "string",
+        "size": "string",
+        "shape": "string",
+        "squaremeter": "float",
+        "priceunit": "float",
+        "priceset": "float",
+        "price": "float",
+        "remarks": "string",
+    }
+
+    function toType(field, value) {
+        switch (fieldTy[field]) {
+            case "int":
+                return parseInt(value)
+            case "string":
+                return value
+            case "float":
+                return parseFloat(value)
+        }
+        return value
+    }
+
+    function modifyForm(field, newValue, row) {
+        row[field] = toType(field, newValue)
+
+        $.post(
+            "/rep/api/v1/op",
+            { "type": "form", "op": "put", "obj": JSON.stringify(row) },
+            function (data, status) {
+                if (status != "success") {
+                    alert("添加失败:" + JSON.stringify(data))
+                }
+            }
+        )
+    }
+
+    function addform() {
+        alert("addform")
+    }
+
+</script>
+</body>
 
 </html>

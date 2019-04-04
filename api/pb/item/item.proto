@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package pb.item;
+
+import "github.com/zhanglp92/rep/api/pb/user/user.proto";
+
+// 数据最基础单元
+message Item {
+    int32 id = 1;
+    int32 userid = 2;
+    string type = 3;
+    string colour = 4;
+    string opendirection = 5;
+    string size = 6;
+    string shape = 7;
+    string glass = 8;
+    float squaremeter = 9;
+    float priceunit = 10;
+    float priceset = 11;
+    float price = 12;
+    string remarks = 13;
+    pb.user.Item user = 14;
+}
+
+message DQ {
+    repeated Item data = 1;
+}

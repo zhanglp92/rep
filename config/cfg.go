@@ -27,5 +27,6 @@ func newCfg(path string) (*cfg, error) {
 	if err := yaml.Unmarshal(data, conf); err != nil {
 		return nil, fmt.Errorf("parse config err: %v", err)
 	}
+
 	return conf, nil
 }

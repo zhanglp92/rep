@@ -33,12 +33,29 @@ func New(path string) (c *Config, err error) {
 	return c, c.init()
 }
 
-// DataPath ...
-func (a *Config) DataPath() string {
+// FormPath 订单数据路径
+func (a *Config) FormPath() string {
 	if a == nil {
 		return ""
 	}
-	return a.cfg.Path.Data
+
+	return a.cfg.Path.Form
+}
+
+// LevelDBPath ...
+func (a *Config) LevelDBPath() string {
+	if a == nil {
+		return ""
+	}
+	return a.cfg.Path.LevelDB
+}
+
+// UserPath 用户数据路径
+func (a *Config) UserPath() string {
+	if a == nil {
+		return ""
+	}
+	return a.cfg.Path.User
 }
 
 // Web config

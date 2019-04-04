@@ -6,5 +6,9 @@ package config
 type Path struct {
 	Root string
 
-	Data string
+	Form string
+
+	User string
+
+	LevelDB string
 }

@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "userid": 1,
+        "type": "荣耀2号80",
+        "colour": "金橡木",
+        "opendirection": "内右开",
+        "size": "2000*770*185",
+        "shape": "手机图",
+        "glass": "白+沙",
+        "squaremeter": 10.1,
+        "priceunit": 10.1,
+        "priceset": 650,
+        "price": 650,
+        "remarks": "单丁墙双钢化"
+    },
+    {
+        "id": 2,
+        "userid": 2,
+        "type": "荣耀2号80",
+        "colour": "金橡木",
+        "opendirection": "内右开",
+        "size": "2000*770*185",
+        "shape": "手机图",
+        "glass": "白+沙",
+        "squaremeter": 10.1,
+        "priceunit": 10.1,
+        "priceset": 650,
+        "price": 650,
+        "remarks": "单丁墙双钢化"
+    },
+    {
+        "id": 3,
+        "userid": 2,
+        "type": "荣耀2号80",
+        "colour": "金橡木",
+        "opendirection": "内右开",
+        "size": "2000*770*185",
+        "shape": "手机图",
+        "glass": "白+沙",
+        "squaremeter": 10.1,
+        "priceunit": 10.1,
+        "priceset": 650,
+        "price": 650,
+        "remarks": "单丁墙双钢化"
+    },
+    {
+        "id": 4,
+        "userid": 4,
+        "type": "荣耀2号80",
+        "colour": "金橡木",
+        "opendirection": "内右开",
+        "size": "2000*770*185",
+        "shape": "手机图",
+        "glass": "白+沙",
+        "squaremeter": 10.1,
+        "priceunit": 10.1,
+        "priceset": 650,
+        "price": 650,
+        "remarks": "单丁墙双钢化"
+    }
+]
