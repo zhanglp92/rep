@@ -50,6 +50,15 @@ func (a *Form) Get(id int32) (item *pb_item.Item, err error) {
 	return
 }
 
+func (a *Form) genID() (id int32) {
+	for _, item := range a.Range() {
+		if id < item.GetId() {
+			id = item.GetId()
+		}
+	}
+	return id + 1
+}
+
 // Put ...
 func (a *Form) Put(item *pb_item.Item) error {
 	if item.GetId() <= 0 {

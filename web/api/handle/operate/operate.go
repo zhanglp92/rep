@@ -10,7 +10,6 @@ import (
 
 	dbe "github.com/syndtr/goleveldb/leveldb/errors"
 	pb_item "github.com/zhanglp92/rep/api/pb/item"
-	pb_user "github.com/zhanglp92/rep/api/pb/user"
 	bb "github.com/zhanglp92/rep/base"
 	"github.com/zhanglp92/rep/config"
 	"github.com/zhanglp92/rep/web/api/handle"
@@ -63,6 +62,8 @@ func (a *Operate) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	param, err := newParam(r)
 
+	fmt.Println("TT: ", param.String(), err)
+
 	if err != nil {
 		goto END
 	}
@@ -101,10 +102,7 @@ func (a *Operate) opUser(param *param) ([]byte, error) {
 	case "get":
 		obj, err = a.user.Get(param.id)
 	case "put":
-		var item pb_user.Item
-		if err = param.parseObj(&item); err == nil {
-			err = a.user.Put(&item)
-		}
+		err = a.user.Put(param)
 	case "del":
 		err = a.user.Del(param.id)
 	case "range":

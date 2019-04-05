@@ -8,17 +8,17 @@ import "github.com/zhanglp92/rep/api/pb/user/user.proto";
 message Item {
     int32 id = 1;
     int32 userid = 2;
-    string type = 3;
-    string colour = 4;
-    string opendirection = 5;
-    string size = 6;
-    string shape = 7;
-    string glass = 8;
-    float squaremeter = 9;
-    float priceunit = 10;
-    float priceset = 11;
-    float price = 12;
-    string remarks = 13;
+    string type = 3; // 料型
+    string colour = 4; // 颜色
+    string opendirection = 5; // 开向
+    string size = 6; // 下单尺寸
+    string shape = 7; // 花型
+    string glass = 8; // 玻璃
+    float squaremeter = 9; // 平方米
+    float priceunit = 10; // 单价
+    float priceset = 11; // 单价/套
+    float price = 12; // 合计
+    string remarks = 13; // 备注
     pb.user.Item user = 14;
 }
 

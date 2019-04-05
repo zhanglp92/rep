@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Dashboard | Nadhif - Responsive Admin Template</title>
+    <title>Title</title>
     <link href="/rep/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.css" rel="stylesheet" />
     <link href="/rep/lib/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
@@ -16,10 +16,8 @@
     <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
     <script src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
     <script src="/rep/lib/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
-    <script src="/rep/lib/bootstrap-switch/src/js/bootstrap-switch.js"></script>
+    <!-- <script src="/rep/lib/bootstrap-switch/src/js/bootstrap-switch.js"></script> -->
     <!-- <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script> -->
-
-
 </head>
 
 <style>
@@ -33,14 +31,195 @@
     }
 </style>
 
+<!-- <form action="/RequestDemo/RequestDemo3" method="post">
+    用户名：<input type="text" name="userName"><br/>
+    密码：<input type="text" name="pwd"><br/>
+    性别：<input type="radio" name="sex" value="男" checked="checked">男
+        <input type="radio" name="sex" value="女">女<br/>
+    爱好：<input type="checkbox" name="hobby" value="足球">足球
+        <input type="checkbox" name="hobby" value="篮球">篮球
+        <input type="checkbox" name="hobby" value="排球">排球
+        <input type="checkbox" name="hobby" value="羽毛球">羽毛球<br/>
+    所在城市：<select name="city">
+             <option>---请选择---</option>
+             <option value="bj">北京</option>
+             <option value="sh">上海</option>
+             <option value="sy">沈阳</option>
+           </select>        
+           <br/>
+    <input type="submit" value="点击注册">
+</form> -->
 
+
+<div class="modal fade" id="addform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">新增订单</h5>
+            </div>
+            <div class="modal-body">
+                <form id="form-addform">
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">客户：</label>
+                        <input type="text" class="form-control" id="f-userid" name="userid">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">料型：</label>
+                        <input type="text" class="form-control" id="f-type" name="type">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">颜色：</label>
+                        <input type="text" class="form-control" id="f-colour" name="colour">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">开向：</label>
+                        <input type="text" class="form-control" id="f-opendirection" name="opendirection">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">下单尺寸：</label>
+                        <input type="text" class="form-control" id="f-size" name="size">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">花型：</label>
+                        <input type="text" class="form-control" id="f-shape" name="shape">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">玻璃：</label>
+                        <input type="text" class="form-control" id="f-glass" name="glass">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">平方米：</label>
+                        <input type="text" class="form-control" id="f-squaremeter" name="squaremeter">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">单价：</label>
+                        <input type="text" class="form-control" id="f-priceunit" name="priceunit">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">单价/套：</label>
+                        <input type="text" class="form-control" id="f-priceset" name="priceset">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">合计：</label>
+                        <input type="text" class="form-control" id="f-price" name="price">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="form-control-label">备注：</label>
+                        <textarea class="form-control" id="f-remark" name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="addForm()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">新增订单</h5>
+            </div>
+            <div class="modal-body">
+                <form id="form-adduser">
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">姓名：</label>
+                        <input type="text" class="form-control" id="u-name" name="name">
+                    </div>
+                    <!-- <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">性别：</label>
+                            男：<input type="radio" checked="checked" id="sex" name="sex" value="男" />
+                            女：<input type="radio" id="sex" name="sex" value="男" />
+                        </div> -->
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">电话：</label>
+                        <input type="text" class="form-control" id="u-phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-control-label">地址：</label>
+                        <input type="text" class="form-control" id="u-addr" name="addr">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="form-control-label">备注：</label>
+                        <textarea class="form-control" id="u-remark" name="remark"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="addUser()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addform"
+    data-whatever="@mdo">新增订单</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
+    data-whatever="@mdo">新增客户</button>
 <table id="mytab" class="table-hover"></table>
 
-<script>
-    $(function () {
-        $('#mySwitch input').bootstrapSwitch();
-    })
 
+<script>
+    var form_addform = document.getElementById('form-addform');
+    function addForm() {
+        row = {
+            "userid": document.getElementById("f-userid").value,
+            "type": document.getElementById("f-type").value,
+            "colour": document.getElementById("f-colour").value,
+            "opendirection": document.getElementById("f-opendirection").value,
+            "size": document.getElementById("f-size").value,
+            "shape": document.getElementById("f-shape").value,
+            "glass": document.getElementById("f-glass").value,
+            "squaremeter": document.getElementById("f-squaremeter").value,
+            "priceunit": document.getElementById("f-priceunit").value,
+            "priceset": document.getElementById("f-priceset").value,
+            "price": document.getElementById("f-price").value,
+            "remark": document.getElementById("f-remark").value,
+        }
+        alert(JSON.stringify(row))
+
+        $.post(
+            "/rep/api/v1/op",
+            { "type": "form", "op": "put", "obj": JSON.stringify(row) },
+            function (data, status) {
+                if (status === "success" && data == "null") {
+                    alert("添加成功")
+                } else {
+                    alert(JSON.stringify(data))
+                }
+            }
+        )
+    }
+
+    var form_adduser = document.getElementById('form-adduser');
+    function addUser() {
+
+        row = {
+            "name": document.getElementById('u-name').value,
+            "phone": document.getElementById('u-phone').value,
+            "addr": document.getElementById('u-addr').value,
+            // "sex": document.getElementById('u-sex').value,
+            "remark": document.getElementById('u-remark').value,
+        }
+
+        $.post(
+            "/rep/api/v1/op",
+            { "type": "user", "op": "put", "obj": JSON.stringify(row) },
+            function (data, status) {
+                if (status === "success" && data == "null") {
+                    alert("添加成功")
+                } else {
+                    alert(JSON.stringify(data))
+                }
+            }
+        )
+    }
 
     $('#mytab').bootstrapTable({
         url: '/rep/api/v1/op?type=form&op=range',

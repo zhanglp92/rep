@@ -9,10 +9,11 @@ import (
 type param struct {
 	r *http.Request
 
-	ty  string
-	op  string
-	id  int32
-	obj []byte
+	ty     string
+	op     string
+	id     int32
+	isover bool
+	obj    []byte
 }
 
 func newParam(r *http.Request) (*param, error) {
@@ -53,6 +54,10 @@ func (a *param) init() (err error) {
 
 	if v := a.r.Form["op"]; len(v) > 0 {
 		a.op = v[0]
+	}
+
+	if v := a.r.Form["isover"]; len(v) > 0 && v[0] == "1" {
+		a.isover = true
 	}
 
 	if v := a.r.Form["id"]; len(v) > 0 {

@@ -8,6 +8,8 @@ message Item {
     string name = 2;
     string phone = 3;
     string sex = 4;
+    string addr = 5;
+    string remark = 6;
 }
 
 message DQ {

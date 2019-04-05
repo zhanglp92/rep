@@ -1,7 +1,9 @@
 package operate
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -46,17 +48,37 @@ func (a *User) Get(id int32) (*pb_user.Item, error) {
 	return &item, nil
 }
 
-// Put ...
-func (a *User) Put(item *pb_user.Item) (err error) {
-	if item.GetId() <= 0 {
-		return ErrBadData
-	}
+// 生成新id 并check
+func (a *User) genID(tar *pb_user.Item) (id int32, isExist bool) {
+	for _, item := range a.Range() {
+		if strings.Compare(item.GetName(), tar.GetName()) == 0 &&
+			strings.Compare(item.GetPhone(), tar.GetPhone()) == 0 {
+			return item.GetId(), true
+		}
 
-	body, err := proto.Marshal(item)
-	if err != nil {
+		if id < item.GetId() {
+			id = item.GetId()
+		}
+	}
+	return id + 1, false
+}
+
+// Put ...
+func (a *User) Put(param *param) (err error) {
+	var item pb_user.Item
+	if err = param.parseObj(&item); err != nil {
 		return err
 	}
 
+	var isExist bool
+	if item.Id, isExist = a.genID(&item); isExist && !param.isover {
+		return fmt.Errorf("user[%v-%v] is exists", item.GetName(), item.GetPhone())
+	}
+
+	body, err := proto.Marshal(&item)
+	if err != nil {
+		return err
+	}
 	return db.DB().Put(a.idToKey(item.GetId()), body, nil)
 }
 
