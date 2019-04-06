@@ -2,6 +2,7 @@ package operate
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -89,8 +90,21 @@ func (a *User) Range() (dq []*pb_user.Item) {
 			if err := proto.Unmarshal(it.Value(), &item); err != nil {
 				continue
 			}
-			dq = append(dq, &item)
+			dq = append(dq, a.itemAdjust(&item))
 		}
 	}
 	return dq
+}
+
+func (a *User) itemAdjust(item *pb_user.Item) *pb_user.Item {
+	if item == nil {
+		return nil
+	}
+
+	if len(item.GetScreate()) <= 0 {
+		t := item.GetCreateTime()
+		item.Screate = time.Unix(t.GetSeconds(), int64(t.GetNanos())).Format("2006/01/02 15:04:05")
+	}
+
+	return item
 }

@@ -37,106 +37,79 @@
 </style>
 
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addform"
-    data-whatever="@mdo">新增订单</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
+    data-whatever="@mdo">新增客户</button>
 
-<a href="/rep/api/v1/user">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-whatever="@mdo">客户信息</button>
+<a href="/rep/api/v1/display">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-whatever="@mdo">订单信息</button>
 </a>
 
-
-<table id="mytab" class="table-hover"></table>
-
-<div class="modal fade" id="addform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">新增订单</h5>
+                <h5 class="modal-title" id="exampleModalLabel">新增用户</h5>
             </div>
             <div class="modal-body">
-                <form id="form-addform" action="/rep/api/v1/op" method="POST">
+                <form id="form-adduser" action="/rep/api/v1/op" method="POST">
                     <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">客户(电话)：</label>
-                        <input type="text" class="form-control" name="f-phone">
+                        <label for="recipient-name" class="form-control-label">姓名：</label>
+                        <input type="text" class="form-control" name="u-name">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">料型：</label>
-                        <input type="text" class="form-control" name="f-type">
+                        <label for="recipient-name" class="form-control-label">性别：</label>
+                        男：<input type="radio" checked="checked" name="u-sex" value="男" />
+                        女：<input type="radio" name="u-sex" value="女" />
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">颜色：</label>
-                        <input type="text" class="form-control" name="f-colour">
+                        <label for="recipient-name" class="form-control-label">电话：</label>
+                        <input type="text" class="form-control" name="u-phone">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">开向：</label>
-                        <input type="text" class="form-control" name="f-opendirection">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">下单尺寸：</label>
-                        <input type="text" class="form-control" name="f-size">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">花型：</label>
-                        <input type="text" class="form-control" name="f-shape">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">玻璃：</label>
-                        <input type="text" class="form-control" name="f-glass">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">平方米：</label>
-                        <input type="text" class="form-control" name="f-squaremeter">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">单价：</label>
-                        <input type="text" class="form-control" name="f-priceunit">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">单价/套：</label>
-                        <input type="text" class="form-control" name="f-priceset">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">合计：</label>
-                        <input type="text" class="form-control" name="f-price">
+                        <label for="recipient-name" class="form-control-label">地址：</label>
+                        <input type="text" class="form-control" name="u-addr">
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="form-control-label">备注：</label>
-                        <textarea class="form-control" name="f-remarks"></textarea>
+                        <textarea class="form-control" name="u-remark"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="addForm()">保存</button>
+                <button type="button" class="btn btn-primary" onclick="addUser()">保存</button>
             </div>
         </div>
     </div>
 </div>
 
 
+<table id="mytab" class="table-hover"></table>
+
 <script>
 
-    function addForm() {
-        var form_addform = document.getElementById('form-addform');
+    function addUser() {
+        var form_adduser = document.getElementById('form-adduser')
 
         var newElement = document.createElement("input")
         newElement.setAttribute("type", "hidden")
         newElement.name = "type"
-        newElement.value = "form"
-        form_addform.appendChild(newElement)
+        newElement.value = "user"
+        form_adduser.appendChild(newElement)
 
         var newElement = document.createElement("input")
         newElement.setAttribute("type", "hidden")
         newElement.name = "op"
         newElement.value = "put"
-        form_addform.appendChild(newElement)
+        form_adduser.appendChild(newElement)
 
-        form_addform.submit()
+        form_adduser.submit()
     }
 
 
+
     $('#mytab').bootstrapTable({
-        url: '/rep/api/v1/op?type=form&op=range',
+        url: '/rep/api/v1/op?type=user&op=range',
 
         uniqueId: "id",
         striped: true,      //是否显示行间隔色
@@ -218,14 +191,21 @@
                 align: "center",
                 valign: "middle",
                 sortable: true,
+                visible: false,
             },
             {
-                title: '客户',
-                field: 'username',
+                title: '姓名',
+                field: 'name',
                 align: "center",
                 valign: "middle",
                 sortable: true,
-                formatter: getName,
+            },
+            {
+                title: '性别',
+                field: 'sex',
+                align: "center",
+                valign: "middle",
+                sortable: true,
             },
             {
                 title: '电话',
@@ -233,93 +213,21 @@
                 align: "center",
                 valign: "middle",
                 sortable: true,
-                // visible 会影响可编译按钮位置
-                // visible: false,
             },
             {
-                field: 'type',
-                title: '料型',
+                title: '地址',
+                field: 'addr',
                 align: "center",
                 valign: "middle",
                 sortable: true,
             },
             {
-                field: 'colour',
-                title: '颜色',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'opendirection',
-                title: '开向',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'size',
-                title: '下单尺寸',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'shape',
-                title: '花型',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'glass',
-                title: '玻璃',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'squaremeter',
-                title: '平方米',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'priceunit',
-                title: '单价',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'priceset',
-                title: '单价/套',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'price',
-                title: '合计',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'remarks',
-                title: '客户特殊要求备注',
+                field: 'remark',
+                title: '备注',
             },
             {
                 field: 'screate',
                 title: '创建时间',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'supdate',
-                title: '修改时间',
                 align: "center",
                 valign: "middle",
                 sortable: true,
@@ -349,22 +257,16 @@
         }
     }
 
-
-
     function operation(value, row, index) {
-        return '<a href="#" class="btn btn-info" onclick="del(this)" data-id="' + row["id"] + '")">删除</a>'
-    }
-
-    function getName(value, row, index) {
-        return '<a onclick="getUserInfo(this) data-phone="' + row["phone"] + '">' + value + '</a>';
+        return '<a onclick="del(this)" href="#" class="btn btn-info" phone="'+ row["phone"] + '">删除</a>'
     }
 
     function del(e) {
-        var id = e.getAttribute("data-id")
-        if (id == undefined) {
-            url = "/rep/api/v1/op?type=form&op=del"
+        var phone = e.getAttribute("phone")
+        if (phone == undefined) {
+            url = "/rep/api/v1/op?type=user&op=del"
         } else {
-            url = "/rep/api/v1/op?type=form&op=del&id=" + id
+            url = "/rep/api/v1/op?type=user&op=del&phone=" + phone
         }
 
         $.ajax({

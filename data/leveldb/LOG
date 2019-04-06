@@ -205,3 +205,69 @@
 16:52:51.197394 version@stat F·[1 1] S·2KiB[226B 1KiB] Sc·[0.25 0.00]
 16:52:51.199963 db@janitor F·4 G·0
 16:52:51.200009 db@open done T·3.912023ms
+=============== Apr 6, 2019 (CST) ===============
+18:21:33.697888 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:21:33.698396 version@stat F·[1 1] S·2KiB[226B 1KiB] Sc·[0.25 0.00]
+18:21:33.698426 db@open opening
+18:21:33.698519 journal@recovery F·1
+18:21:33.699048 journal@recovery recovering @49
+18:21:33.700672 memdb@flush created L0@51 N·16 S·744B "form_11,v122":"usr..243,v126"
+18:21:33.701210 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:21:33.702781 db@janitor F·5 G·0
+18:21:33.702818 db@open done T·4.379481ms
+=============== Apr 6, 2019 (CST) ===============
+18:40:14.952251 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:40:14.952921 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:40:14.952954 db@open opening
+18:40:14.953055 journal@recovery F·1
+18:40:14.954903 journal@recovery recovering @52
+18:40:14.955639 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:40:14.956784 db@janitor F·5 G·0
+18:40:14.956836 db@open done T·3.855913ms
+=============== Apr 6, 2019 (CST) ===============
+18:40:21.107611 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:40:21.107986 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:40:21.108018 db@open opening
+18:40:21.108112 journal@recovery F·1
+18:40:21.108567 journal@recovery recovering @54
+18:40:21.109569 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:40:21.112703 db@janitor F·5 G·0
+18:40:21.112814 db@open done T·4.777411ms
+=============== Apr 6, 2019 (CST) ===============
+18:48:07.151836 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:48:07.152671 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:48:07.152717 db@open opening
+18:48:07.152829 journal@recovery F·1
+18:48:07.153332 journal@recovery recovering @56
+18:48:07.153813 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+18:48:07.155035 db@janitor F·5 G·0
+18:48:07.155082 db@open done T·2.341986ms
+=============== Apr 6, 2019 (CST) ===============
+23:02:29.328758 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+23:02:29.329115 version@stat F·[2 1] S·2KiB[970B 1KiB] Sc·[0.50 0.00]
+23:02:29.329145 db@open opening
+23:02:29.329237 journal@recovery F·1
+23:02:29.329692 journal@recovery recovering @58
+23:02:29.330427 memdb@flush created L0@60 N·24 S·697B "form_0,d128":"usr..ned,d129"
+23:02:29.332762 version@stat F·[3 1] S·3KiB[1KiB 1KiB] Sc·[0.75 0.00]
+23:02:29.334295 db@janitor F·6 G·0
+23:02:29.334342 db@open done T·5.176352ms
+=============== Apr 6, 2019 (CST) ===============
+23:04:30.248822 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+23:04:30.249211 version@stat F·[3 1] S·3KiB[1KiB 1KiB] Sc·[0.75 0.00]
+23:04:30.249241 db@open opening
+23:04:30.249342 journal@recovery F·1
+23:04:30.249881 journal@recovery recovering @61
+23:04:30.250655 memdb@flush created L0@63 N·1 S·125B "usr..532,d153":"usr..532,d153"
+23:04:30.251250 version@stat F·[4 1] S·3KiB[1KiB 1KiB] Sc·[1.00 0.00]
+23:04:30.252899 db@janitor F·7 G·0
+23:04:30.252966 db@open done T·3.702656ms
+23:04:30.253060 table@compaction L0·4 -> L1·1 S·3KiB Q·154
+23:04:30.254192 table@build created L1@66 N·74 S·2KiB "form_11,v140":"usr_3432,v135"
+23:04:30.254250 version@stat F·[0 1] S·2KiB[0B 2KiB] Sc·[0.00 0.00]
+23:04:30.254445 table@compaction committed F-4 S-1KiB Ke·0 D·43 T·1.309808ms
+23:04:30.254585 table@remove removed @63
+23:04:30.254691 table@remove removed @60
+23:04:30.254863 table@remove removed @51
+23:04:30.255803 table@remove removed @44
+23:04:30.256432 table@remove removed @43

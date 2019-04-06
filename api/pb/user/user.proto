@@ -13,6 +13,7 @@ message Item {
     string addr = 5;
     string remark = 6;
     google.protobuf.Timestamp create_time = 7;
+    string screate = 8;   
 }
 
 message DQ {
