@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"time"
 
 	"github.com/golang/protobuf/proto"
+	pb_timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	pb_item "github.com/zhanglp92/rep/api/pb/item"
@@ -118,7 +120,7 @@ func (a *Form) Range() (dq []*pb_item.Item) {
 			}
 			item.Username = item.User.GetName()
 
-			dq = append(dq, &item)
+			dq = append(dq, a.itemAdjust(&item))
 		}
 	}
 	return dq
@@ -141,11 +143,7 @@ func (a *Form) get(id int32) (*pb_item.Item, error) {
 
 // t left join s
 func (a *Form) mergeItem(t, s *pb_item.Item) (item *pb_item.Item) {
-	defer func() {
-		if item != nil {
-			item.CreateTime = item.GetUpdateTime()
-		}
-	}()
+	defer func() { a.itemAdjust(item) }()
 
 	if s == nil {
 		return t
@@ -168,4 +166,35 @@ func (a *Form) mergeItem(t, s *pb_item.Item) (item *pb_item.Item) {
 		}
 	}
 	return t
+}
+
+func (a *Form) itemAdjust(item *pb_item.Item) *pb_item.Item {
+	if item == nil {
+		return nil
+	}
+
+	if item.CreateTime = item.GetUpdateTime(); item.GetCreateTime() == nil {
+		now := time.Now()
+
+		item.CreateTime = &pb_timestamp.Timestamp{
+			Seconds: now.Unix(),
+			Nanos:   int32(now.Nanosecond()),
+		}
+		item.UpdateTime = &pb_timestamp.Timestamp{
+			Seconds: now.Unix(),
+			Nanos:   int32(now.Nanosecond()),
+		}
+	}
+
+	if len(item.GetScreate()) <= 0 {
+		t := item.GetCreateTime()
+		item.Screate = time.Unix(t.GetSeconds(), int64(t.GetNanos())).Format("2006/01/02 15:04:05")
+	}
+
+	if len(item.GetSupdate()) <= 0 {
+		t := item.GetUpdateTime()
+		item.Supdate = time.Unix(t.GetSeconds(), int64(t.GetNanos())).Format("2006/01/02 15:04:05")
+	}
+
+	return item
 }

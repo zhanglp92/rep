@@ -24,6 +24,8 @@ message Item {
     google.protobuf.Timestamp create_time = 15;
     string username = 16; // 客户姓名
     google.protobuf.Timestamp update_time = 17;
+    string screate = 18;
+    string supdate = 19;
 }
 
 message DQ {

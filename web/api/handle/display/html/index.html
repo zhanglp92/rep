@@ -3,19 +3,26 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Title</title>
-    <link href="/rep/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>思诺宜家</title>
+    <link href="/rep/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.css" rel="stylesheet" />
     <link href="/rep/lib/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
     <link href="/rep/lib/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+    <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet">
+
 
     <script src="/rep/lib/node_modules/popper.js/dist/umd/popper.js"></script>
     <script src="/rep/lib/js/jquery-3.3.1.min.js"></script>
-    <script src="/rep/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/rep/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="/rep/lib/bootstrap-table/dist/bootstrap-table.js"></script>
     <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
     <script src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
     <script src="/rep/lib/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/extensions/export/bootstrap-table-export.js"></script>
+    <script src="/rep/lib/tableExport.jquery.plugin/tableExport.min.js"></script>
+    <script src="/rep/lib/tableExport.jquery.plugin/libs/js-xlsx/xlsx.core.min.js"></script>
+    <script src="/rep/lib/tableExport.jquery.plugin/libs/FileSaver/FileSaver.min.js"></script>
+
 </head>
 
 <style>
@@ -34,6 +41,9 @@
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
     data-whatever="@mdo">新增客户</button>
+
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#export" data-whatever="@mdo">导出</button> -->
+
 
 <table id="mytab" class="table-hover"></table>
 
@@ -185,20 +195,20 @@
     $('#mytab').bootstrapTable({
         url: '/rep/api/v1/op?type=form&op=range',
 
-        uniqueId: "ID",
+        uniqueId: "id",
         striped: true,      //是否显示行间隔色
         cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
         pagination: true,     //是否显示分页（*）
         sortable: true,      //是否启用排序
-        sortOrder: "ID asc",     //排序方式
+        sortOrder: "id asc",     //排序方式
         pageNumber: 1,      //初始化加载第一页，默认第一页
         pageSize: 12,      //每页的记录行数（*）
-        pageList: [20, 50, 100, 150],  //可供选择的每页的行数（*）
+        pageList: [20, 50, 100, 150, 'all'],  //可供选择的每页的行数（*）
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         //queryParams: queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
         showColumns: true, //是否显示所有的列
         // showRefresh: true, //是否显示刷新按钮
-        minimumCountColumns: 2,    //最少允许的列数
+        minimumCountColumns: 0,    //最少允许的列数
         // clickToSelect: true,    //是否启用点击选中行
         search: true, //是否显示表格搜索
         // strictSearch: true, // 严格搜索
@@ -211,6 +221,34 @@
         searchOnEnterKey: true,//回车搜索
         toolbar: "#toolbar",//指定工具栏
         toolbarAlign: "right",//工具栏对齐方式,
+        striped: true,                      //是否显示行间隔色(斑马线)
+        paginationLoop: false,
+
+        showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                  //是否显示父子表
+
+
+        showExport: phoneOrPc(),              //是否显示导出按钮(此方法是自己写的目的是判断终端是电脑还是手机,电脑则返回true,手机返回falsee,手机不显示按钮)
+        exportDataType: "selected",              //basic', 'all', 'selected'.
+        exportTypes: ['xlsx'],	    //导出类型
+        //exportButton: $('#btn_export'),     //为按钮btn_export  绑定导出事件  自定义导出按钮(可以不用)
+        exportOptions: {
+            //ignoreColumn: [0,0],            //忽略某一列的索引  
+            fileName: '思诺宜家',              //文件名称设置  
+            worksheetName: 'Sheet1',          //表格工作区名称  
+            tableName: '订单',
+            excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+            //onMsoNumberFormat: DoOnMsoNumberFormat  
+        },
+        //导出excel表格设置<<<<<<<<<<<<<<<<
+
+        onLoadSuccess: function () {  //加载成功时执行
+            console.info("加载成功");
+        },
+        onLoadError: function () {  //加载失败时执行
+            console.info("加载数据失败");
+        },
 
         onClickCell: function (field, value, row, $element) {
             if (constField[field]) {
@@ -236,6 +274,7 @@
                 field: 'id',
                 align: "center",
                 valign: "middle",
+                sortable: true,
             },
             {
                 title: '客户',
@@ -329,11 +368,44 @@
                 title: '客户特殊要求备注',
             },
             {
+                field: 'screate',
+                title: '创建时间',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
+                field: 'supdate',
+                title: '修改时间',
+                align: "center",
+                valign: "middle",
+                sortable: true,
+            },
+            {
                 field: 'op', title: '操作', align: 'center', valign: 'middle',
                 formatter: operation,
             }
-        ]
+        ],
     });
+
+    /*判断终端是手机还是电脑--用于判断文件是否导出(电脑需要导出)*/
+    function phoneOrPc() {
+        var sUserAgent = navigator.userAgent.toLowerCase();
+        var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+        var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+        var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+        var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+        var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+        var bIsAndroid = sUserAgent.match(/android/i) == "android";
+        var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+        var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+        if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 
     function operation(value, row, index) {
@@ -378,7 +450,7 @@
     }
 
     var constField = {
-        "username": true, "phone": true
+        "username": true, "phone": true, "screate": true, "supdate": true
     }
 
     var fieldTy = {
