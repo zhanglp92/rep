@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	dbe "github.com/syndtr/goleveldb/leveldb/errors"
-	pb_item "github.com/zhanglp92/rep/api/pb/item"
 	bb "github.com/zhanglp92/rep/base"
 	"github.com/zhanglp92/rep/config"
 	"github.com/zhanglp92/rep/web/api/handle"
@@ -62,8 +61,6 @@ func (a *Operate) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	param, err := newParam(r)
 
-	fmt.Println("TT: ", param.String(), err)
-
 	if err != nil {
 		goto END
 	}
@@ -100,11 +97,11 @@ func (a *Operate) opUser(param *param) ([]byte, error) {
 
 	switch param.op {
 	case "get":
-		obj, err = a.user.Get(param.id)
+		obj, err = a.user.Get(param.phone)
 	case "put":
 		err = a.user.Put(param)
 	case "del":
-		err = a.user.Del(param.id)
+		err = a.user.Del(param.phone)
 	case "range":
 		obj = a.user.Range()
 	default:
@@ -128,10 +125,7 @@ func (a *Operate) opForm(param *param) ([]byte, error) {
 	case "get":
 		obj, err = a.form.Get(param.id)
 	case "put":
-		var item pb_item.Item
-		if err = param.parseObj(&item); err == nil {
-			err = a.form.Put(&item)
-		}
+		err = a.form.Put(param)
 	case "del":
 		err = a.form.Del(param.id)
 	case "range":

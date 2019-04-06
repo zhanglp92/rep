@@ -4,7 +4,6 @@ package form
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 
@@ -43,10 +42,10 @@ func (a *Display) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		a.apiGet(w, r)
+		err = a.apiGet(w, r)
 	case http.MethodPost:
 		if err = r.ParseForm(); err != nil {
-			a.apiPost(w, r)
+			err = a.apiPost(w, r)
 		}
 	default:
 		err = base.ErrMethod
@@ -64,15 +63,13 @@ func (a *Display) Location() string {
 
 // ---- internal ----
 
-func (a *Display) apiGet(w http.ResponseWriter, r *http.Request) {
+func (a *Display) apiGet(w http.ResponseWriter, r *http.Request) error {
 	path := filepath.Join(bb.CurrentDir(), "html/index.html")
 
 	t := template.Must(template.ParseFiles(path))
-	names := []string{"john", "jim"}
-	if err := t.Execute(w, names); err != nil {
-		log.Fatal(err)
-	}
+	return t.Execute(w, nil)
 }
 
-func (a *Display) apiPost(w http.ResponseWriter, r *http.Request) {
+func (a *Display) apiPost(w http.ResponseWriter, r *http.Request) error {
+	return nil
 }

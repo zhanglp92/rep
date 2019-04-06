@@ -2,14 +2,17 @@ syntax = "proto3";
 
 package pb.user;
 
+import "google/protobuf/timestamp.proto";
+
 // 客户数据
 message Item {
-    int32 id = 1;
+    string id = 1; // 同phone
     string name = 2;
     string phone = 3;
     string sex = 4;
     string addr = 5;
     string remark = 6;
+    google.protobuf.Timestamp create_time = 7;
 }
 
 message DQ {

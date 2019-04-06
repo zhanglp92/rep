@@ -2,8 +2,6 @@ package operate
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -26,13 +24,13 @@ func newUser(config *config.Config) (*User, error) {
 
 func (a *User) init() error { return nil }
 
-func (a *User) idToKey(id int32) []byte {
-	return []byte(db.PKUser + strconv.FormatInt(int64(id), 10))
+func (a *User) idToKey(id string) []byte {
+	return []byte(db.PKUser + id)
 }
 
 // Get ...
-func (a *User) Get(id int32) (*pb_user.Item, error) {
-	if id <= 0 {
+func (a *User) Get(id string) (*pb_user.Item, error) {
+	if len(id) <= 0 {
 		return nil, ErrBadData
 	}
 
@@ -49,33 +47,26 @@ func (a *User) Get(id int32) (*pb_user.Item, error) {
 }
 
 // 生成新id 并check
-func (a *User) genID(tar *pb_user.Item) (id int32, isExist bool) {
-	for _, item := range a.Range() {
-		if strings.Compare(item.GetName(), tar.GetName()) == 0 &&
-			strings.Compare(item.GetPhone(), tar.GetPhone()) == 0 {
-			return item.GetId(), true
-		}
-
-		if id < item.GetId() {
-			id = item.GetId()
-		}
+func (a *User) genID(tar *pb_user.Item) (id string, isExist bool) {
+	id = tar.GetPhone()
+	if v, err := a.Get(id); v != nil && err == nil {
+		isExist = true
 	}
-	return id + 1, false
+	return id, isExist
 }
 
 // Put ...
 func (a *User) Put(param *param) (err error) {
-	var item pb_user.Item
-	if err = param.parseObj(&item); err != nil {
-		return err
-	}
+	var (
+		isExist bool
+		item    = param.toUser()
+	)
 
-	var isExist bool
-	if item.Id, isExist = a.genID(&item); isExist && !param.isover {
+	if item.Id, isExist = a.genID(item); isExist && !param.isover {
 		return fmt.Errorf("user[%v-%v] is exists", item.GetName(), item.GetPhone())
 	}
 
-	body, err := proto.Marshal(&item)
+	body, err := proto.Marshal(item)
 	if err != nil {
 		return err
 	}
@@ -83,12 +74,14 @@ func (a *User) Put(param *param) (err error) {
 }
 
 // Del ...
-func (a *User) Del(id int32) error {
+func (a *User) Del(id string) error {
 	return db.DB().Delete(a.idToKey(id), nil)
 }
 
 // Range ...
 func (a *User) Range() (dq []*pb_user.Item) {
+	dq = make([]*pb_user.Item, 0)
+
 	it := db.DB().NewIterator(&util.Range{Start: []byte(db.PKUser), Limit: []byte(db.PKUser + "Z")}, nil)
 	for it.Next() {
 		if it.Valid() {

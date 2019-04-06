@@ -2,19 +2,109 @@
 <html lang=zh-cn>
 
 <head>
-    <meta charset=utf-8>
-    <meta http-equiv=X-UA-Compatible content="IE=edge">
-    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name=renderer content=webkit>
-    <meta name=description content=引擎平台>
-    <meta name=keywords content="">
-    <title>引擎平台</title>
-    <link rel="shortcut icon" href=./static/favicon.png type=image/x-icon> <link
-        href=/rep/static/css/app.0781cc81a263670a7d6586484145fe11.css rel=stylesheet>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link href="/rep/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/rep/lib/bootstrap-table/dist/bootstrap-table.css" rel="stylesheet" />
+    <link href="/rep/lib/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet" />
+    <link href="/rep/lib/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+
+    <script src="/rep/lib/node_modules/popper.js/dist/umd/popper.js"></script>
+    <script src="/rep/lib/js/jquery-3.3.1.min.js"></script>
+    <script src="/rep/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="/rep/lib/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <!-- <script src="/rep/lib/bootstrap-switch/src/js/bootstrap-switch.js"></script> -->
+    <!-- <script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script> -->
 </head>
 
 <body>
-    <div id=app></div>
-    <script type=text/javascript src=/rep/static/js/manifest.1317a661c12771cd850d.js> </script> <script
-        type=text/javascript src=/rep/static/js/vendor.9dceceeb0fd3463c7a7f.js> </script> <script type=text/javascript
-        src=/rep/static/js/app.767107e481ee0626bfbd.js> </script> </body> </html>
+
+    <div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增订单</h5>
+                </div>
+                <div class="modal-body">
+                    <form url="/rep/api/v1/form" id="form-adduser" method="POST">
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">姓名：</label>
+                            <input type="text" class="form-control" id="u-name" name="name">
+                        </div>
+                        <!-- <div class="form-group">
+                                        <label for="recipient-name" class="form-control-label">性别：</label>
+                                        男：<input type="radio" checked="checked" id="sex" name="sex" value="男" />
+                                        女：<input type="radio" id="sex" name="sex" value="男" />
+                                    </div> -->
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">电话：</label>
+                            <input type="text" class="form-control" id="u-phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">地址：</label>
+                            <input type="text" class="form-control" id="u-addr" name="addr">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="form-control-label">备注：</label>
+                            <textarea class="form-control" id="u-remark" name="remark"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addUser()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
+        data-whatever="@mdo">新增客户</button>
+
+
+    <script>
+        
+        function addUser() {
+
+            alert("TT: ")
+
+            var form_adduser = document.getElementById('form-adduser');
+
+            var newElement = document.createElement("input");
+            newElement.setAttribute("type", "hidden");
+            newElement.name = "type";
+            newElement.value = "user"
+            form_adduser.appendChild(newElement)
+
+            form_adduser.submit()
+
+            // row = {
+            //     "name": document.getElementById('u-name').value,
+            //     "phone": document.getElementById('u-phone').value,
+            //     "addr": document.getElementById('u-addr').value,
+            //     // "sex": document.getElementById('u-sex').value,
+            //     "remark": document.getElementById('u-remark').value,
+            // }
+
+            // $.post(
+            //     "/rep/api/v1/op",
+            //     { "type": "user", "op": "put", "obj": JSON.stringify(row) },
+            //     function (data, status) {
+            //         if (status === "success" && data == "null") {
+            //             alert("添加成功")
+            //         } else {
+            //             alert(JSON.stringify(data))
+            //         }
+            //     }
+            // )
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -41,6 +41,13 @@ func (a *Form) Init(config *config.Config) (err error) {
 func (a *Form) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 	var err error
 
+	if err := r.ParseForm(); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("TTxx: ", r.PostForm)
+	fmt.Println("TTx1: ", r.Form)
+
 	switch r.Method {
 	case http.MethodGet:
 		a.apiGet(w, r)

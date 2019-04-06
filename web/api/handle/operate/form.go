@@ -7,13 +7,13 @@ import (
 	"reflect"
 	"strconv"
 
-	"go.uber.org/zap"
-
 	"github.com/golang/protobuf/proto"
+	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	pb_item "github.com/zhanglp92/rep/api/pb/item"
 	"github.com/zhanglp92/rep/config"
 	"github.com/zhanglp92/rep/db"
+	"go.uber.org/zap"
 )
 
 // Form ...
@@ -23,6 +23,8 @@ type Form struct {
 	user *User
 
 	logger *zap.Logger
+
+	// mu sync.RWMutex
 }
 
 func newForm(config *config.Config, user *User) (*Form, error) {
@@ -44,8 +46,8 @@ func (a *Form) Get(id int32) (item *pb_item.Item, err error) {
 		return nil, err
 	}
 
-	if item.User, err = a.user.Get(item.GetUserid()); err != nil {
-		a.logger.Warn("get user fail", zap.Int32("userid", item.GetUserid()), zap.Error(err))
+	if item.User, err = a.user.Get(item.GetPhone()); err != nil {
+		a.logger.Warn("get user fail", zap.String("userid", item.GetPhone()), zap.Error(err))
 	}
 	return
 }
@@ -60,28 +62,29 @@ func (a *Form) genID() (id int32) {
 }
 
 // Put ...
-func (a *Form) Put(item *pb_item.Item) error {
+func (a *Form) Put(param *param) error {
+	item := param.toForm()
+
 	if item.GetId() <= 0 {
-		return ErrBadData
+		item.Id = a.genID()
 	}
 
+	if item.GetId() <= 0 {
+		return fmt.Errorf("用户名为空")
+	}
+
+	user, err := a.user.Get(item.GetPhone())
+	if err != nil {
+		return fmt.Errorf("nomatch user[%v]", item.GetPhone())
+	}
+	item.Username = user.GetName()
+
 	old, err := a.get(item.GetId())
-	if err != nil && err != ErrFormNotExists {
+	if err != nil && err != errors.ErrNotFound {
 		return err
 	}
 
-	uid := item.GetUser().GetId()
-	item.User = nil
-	item = a.mergeItem(old, item)
-	if item.Userid <= 0 {
-		item.Userid = uid
-	}
-
-	if _, err := a.user.Get(item.GetUserid()); err != nil {
-		return fmt.Errorf("nomatch user[%v]", item.GetUserid())
-	}
-
-	body, err := proto.Marshal(item)
+	body, err := proto.Marshal(a.mergeItem(old, item))
 	if err != nil {
 		return err
 	}
@@ -95,6 +98,8 @@ func (a *Form) Del(id int32) error {
 
 // Range ...
 func (a *Form) Range() (dq []*pb_item.Item) {
+	dq = make([]*pb_item.Item, 0)
+
 	it := db.DB().NewIterator(&util.Range{Start: []byte(db.PKForm), Limit: []byte(db.PKForm + "Z")}, nil)
 	for it.Next() {
 		if it.Valid() {
@@ -108,9 +113,10 @@ func (a *Form) Range() (dq []*pb_item.Item) {
 				continue
 			}
 
-			if item.User, err = a.user.Get(item.GetUserid()); err != nil {
-				a.logger.Warn("get user fail", zap.Int32("userid", item.GetUserid()), zap.Error(err))
+			if item.User, err = a.user.Get(item.GetPhone()); err != nil {
+				a.logger.Warn("get user fail", zap.String("phone", item.GetPhone()), zap.Error(err))
 			}
+			item.Username = item.User.GetName()
 
 			dq = append(dq, &item)
 		}
@@ -134,7 +140,13 @@ func (a *Form) get(id int32) (*pb_item.Item, error) {
 }
 
 // t left join s
-func (a *Form) mergeItem(t, s *pb_item.Item) *pb_item.Item {
+func (a *Form) mergeItem(t, s *pb_item.Item) (item *pb_item.Item) {
+	defer func() {
+		if item != nil {
+			item.CreateTime = item.GetUpdateTime()
+		}
+	}()
+
 	if s == nil {
 		return t
 	}
