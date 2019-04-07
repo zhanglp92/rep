@@ -271,3 +271,13 @@
 23:04:30.254863 table@remove removed @51
 23:04:30.255803 table@remove removed @44
 23:04:30.256432 table@remove removed @43
+=============== Apr 7, 2019 (CST) ===============
+09:27:06.784467 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+09:27:06.784874 version@stat F·[0 1] S·2KiB[0B 2KiB] Sc·[0.00 0.00]
+09:27:06.784901 db@open opening
+09:27:06.784987 journal@recovery F·1
+09:27:06.785606 journal@recovery recovering @64
+09:27:06.786331 memdb@flush created L0@67 N·40 S·979B "form_0,d190":"usr..嘻,d171"
+09:27:06.789192 version@stat F·[1 1] S·3KiB[979B 2KiB] Sc·[0.25 0.00]
+09:27:06.790794 db@janitor F·4 G·0
+09:27:06.790855 db@open done T·5.92435ms

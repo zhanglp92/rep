@@ -57,9 +57,11 @@ func (a *param) init() (err error) {
 func (a *param) toUser() *pb_user.Item {
 	now := time.Now()
 	return &pb_user.Item{
-		Name:  a.getStr("u-name"),
-		Phone: a.getStr("u-phone"),
-		Sex:   a.getStr("u-sex"),
+		Name:   a.getStr("u-name"),
+		Phone:  a.getStr("u-phone"),
+		Sex:    a.getStr("u-sex"),
+		Addr:   a.getStr("u-addr"),
+		Remark: a.getStr("u-remark"),
 		CreateTime: &pb_timestamp.Timestamp{
 			Seconds: now.Unix(),
 			Nanos:   int32(now.Nanosecond()),
