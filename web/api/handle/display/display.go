@@ -5,7 +5,6 @@ package form
 import (
 	"html/template"
 	"net/http"
-	"path/filepath"
 
 	bb "github.com/zhanglp92/rep/base"
 	"github.com/zhanglp92/rep/config"
@@ -64,7 +63,8 @@ func (a *Display) Location() string {
 // ---- internal ----
 
 func (a *Display) apiGet(w http.ResponseWriter, r *http.Request) error {
-	path := filepath.Join(bb.CurrentDir(), "html/index.html")
+	// path := filepath.Join(bb.CurrentDir(), "html/index.html")
+	path := "lib/html/display/index.html"
 
 	t := template.Must(template.ParseFiles(path))
 	return t.Execute(w, nil)
