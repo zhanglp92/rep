@@ -63,7 +63,6 @@ func (a *Display) Location() string {
 // ---- internal ----
 
 func (a *Display) apiGet(w http.ResponseWriter, r *http.Request) error {
-	// path := filepath.Join(bb.CurrentDir(), "html/index.html")
 	path := "lib/html/display/index.html"
 
 	t := template.Must(template.ParseFiles(path))

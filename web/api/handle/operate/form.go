@@ -5,7 +5,9 @@ package operate
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang/protobuf/proto"
@@ -27,11 +29,17 @@ type Form struct {
 	logger *zap.Logger
 
 	// mu sync.RWMutex
+
+	sizeReg *regexp.Regexp
 }
 
-func newForm(config *config.Config, user *User) (*Form, error) {
-	a := &Form{config: config, user: user}
+func newForm(config *config.Config, user *User) (a *Form, err error) {
+
+	a = &Form{config: config, user: user}
 	a.logger = config.Logger().Named("op-form")
+	if a.sizeReg, err = regexp.Compile(`[\d\.]+[mM]+`); err != nil {
+		return nil, err
+	}
 
 	return a, a.init()
 }
@@ -86,7 +94,7 @@ func (a *Form) Put(param *param) error {
 		return err
 	}
 
-	body, err := proto.Marshal(a.mergeItem(old, item))
+	body, err := proto.Marshal(a.itemAdjust(a.mergeItem(old, item)))
 	if err != nil {
 		return err
 	}
@@ -143,7 +151,15 @@ func (a *Form) get(id int32) (*pb_item.Item, error) {
 
 // t left join s
 func (a *Form) mergeItem(t, s *pb_item.Item) (item *pb_item.Item) {
-	defer func() { a.itemAdjust(item) }()
+	defer func() {
+		a.itemAdjust(item)
+
+		now := time.Now()
+		item.UpdateTime = &pb_timestamp.Timestamp{
+			Seconds: now.Unix(),
+			Nanos:   int32(now.Nanosecond()),
+		}
+	}()
 
 	if s == nil {
 		return t
@@ -173,28 +189,98 @@ func (a *Form) itemAdjust(item *pb_item.Item) *pb_item.Item {
 		return nil
 	}
 
-	if item.CreateTime = item.GetUpdateTime(); item.GetCreateTime() == nil {
-		now := time.Now()
+	//  计算价格
+	a.calPrice(item)
 
+	if item.GetCreateTime() == nil {
+		now := time.Now()
 		item.CreateTime = &pb_timestamp.Timestamp{
 			Seconds: now.Unix(),
 			Nanos:   int32(now.Nanosecond()),
 		}
+	}
+	if item.GetUpdateTime() == nil {
 		item.UpdateTime = &pb_timestamp.Timestamp{
-			Seconds: now.Unix(),
-			Nanos:   int32(now.Nanosecond()),
+			Seconds: item.GetCreateTime().GetSeconds(),
+			Nanos:   item.GetCreateTime().GetNanos(),
 		}
 	}
 
-	if len(item.GetScreate()) <= 0 {
+	{ // 调整显示时间
 		t := item.GetCreateTime()
 		item.Screate = time.Unix(t.GetSeconds(), int64(t.GetNanos())).Format("2006/01/02 15:04:05")
-	}
 
-	if len(item.GetSupdate()) <= 0 {
-		t := item.GetUpdateTime()
+		t = item.GetUpdateTime()
 		item.Supdate = time.Unix(t.GetSeconds(), int64(t.GetNanos())).Format("2006/01/02 15:04:05")
 	}
 
 	return item
+}
+
+func (a *Form) calPrice(item *pb_item.Item) {
+	// 按套计算总价
+	if item.GetPriceset() > 0 {
+		item.Price = item.GetPriceset()
+		return
+	}
+
+	if n, ok := a.sqCkg(item); ok {
+		item.Squaremeter = n
+	} else if n, ok := a.sqDirect(item); ok {
+		item.Squaremeter = n
+	}
+
+	// 平方米 * 单价 = 总价
+	if item.GetPriceunit() <= 0 {
+		return
+	}
+
+	item.Price = item.GetSquaremeter() * item.GetPriceunit()
+}
+
+// 直接提取(平方米)
+func (a *Form) sqDirect(item *pb_item.Item) (v float32, ok bool) {
+	res := a.sizeReg.FindAll([]byte(item.GetSize()), -1)
+	if len(res) <= 0 {
+		return
+	}
+
+	src := strings.TrimSpace(strings.ToUpper(string(res[len(res)-1])))
+	if strings.HasSuffix(src, "MM") {
+		n, err := strconv.ParseFloat(src[:len(src)-2], 0)
+		if err != nil {
+			return
+		}
+		return float32(n / 1000), true
+	}
+
+	if strings.HasSuffix(src, "M") {
+		n, err := strconv.ParseFloat(src[:len(src)-1], 0)
+		if err != nil {
+			return
+		}
+		return float32(n), true
+	}
+
+	return 0, false
+}
+
+// 通过长宽高计算面积(长*宽=平方米)
+func (a *Form) sqCkg(item *pb_item.Item) (v float32, ok bool) {
+	segs := strings.Split(item.GetSize(), "*")
+	if len(segs) < 2 {
+		return
+	}
+
+	c, err := strconv.ParseFloat(strings.TrimSpace(segs[0]), 0)
+	if err != nil {
+		return
+	}
+
+	k, err := strconv.ParseFloat(strings.TrimSpace(segs[1]), 0)
+	if err != nil {
+		return
+	}
+
+	return float32(c / 1000 * k / 1000), true
 }

@@ -63,7 +63,6 @@ func (a *User) Location() string {
 // ---- internal ----
 
 func (a *User) apiGet(w http.ResponseWriter, r *http.Request) error {
-	// path := filepath.Join(bb.CurrentDir(), "html/index.html")
 	path := "lib/html/user/index.html"
 
 	t := template.Must(template.ParseFiles(path))
