@@ -3,6 +3,8 @@ github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
 github.com/golang/snappy
+# github.com/icattlecoder/godaemon v0.0.0-20140627053409-f0fff2a3c017
+github.com/icattlecoder/godaemon
 # github.com/julienschmidt/httprouter v1.2.0
 github.com/julienschmidt/httprouter
 # github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b

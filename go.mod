@@ -3,6 +3,7 @@ module github.com/zhanglp92/rep
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/golang/protobuf v1.3.1
+	github.com/icattlecoder/godaemon v0.0.0-20140627053409-f0fff2a3c017
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20190324214902-3020fec0e66b
 	github.com/opentracing/opentracing-go v1.1.0
