@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	pb_timestamp "github.com/golang/protobuf/ptypes/timestamp"
@@ -14,11 +15,12 @@ import (
 type param struct {
 	r *http.Request
 
-	ty     string
-	op     string
-	phone  string
-	id     int32
-	isover bool
+	ty         string
+	op         string
+	phone      string
+	id         int32
+	isover     bool
+	statusCode int32
 }
 
 func newParam(r *http.Request) (*param, error) {
@@ -50,6 +52,7 @@ func (a *param) init() (err error) {
 	a.isover = a.getBool("isover")
 	a.phone = a.getStr("phone")
 	a.id = int32(a.getInt("id"))
+	a.statusCode = int32(a.getInt("status_code"))
 
 	return nil
 }
@@ -58,7 +61,7 @@ func (a *param) toUser() *pb_user.Item {
 	now := time.Now()
 	return &pb_user.Item{
 		Name:   a.getStr("u-name"),
-		Phone:  a.getStr("u-phone"),
+		Phone:  strings.Split(a.getStr("u-phone"), ":")[0],
 		Sex:    a.getStr("u-sex"),
 		Addr:   a.getStr("u-addr"),
 		Remark: a.getStr("u-remark"),
@@ -77,7 +80,7 @@ func (a *param) toForm() *pb_item.Item {
 
 	now := time.Now()
 	item.Id = int32(a.getInt("f-id", int64(item.Id)))
-	item.Phone = a.getStr("f-phone", item.Phone)
+	item.Phone = strings.Split(a.getStr("f-phone", item.Phone), ":")[0]
 	item.Type = a.getStr("f-type", item.Type)
 	item.Colour = a.getStr("f-colour", item.Colour)
 	item.Opendirection = a.getStr("f-opendirection", item.Opendirection)

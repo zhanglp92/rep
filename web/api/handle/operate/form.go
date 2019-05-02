@@ -63,12 +63,27 @@ func (a *Form) Get(id int32) (item *pb_item.Item, err error) {
 }
 
 func (a *Form) genID() (id int32) {
-	for _, item := range a.Range() {
+	for _, item := range a.Range(nil) {
 		if id < item.GetId() {
 			id = item.GetId()
 		}
 	}
 	return id + 1
+}
+
+// UpdateStatus 更新状态
+func (a *Form) UpdateStatus(param *param) error {
+	item, err := a.get(param.id)
+	if err != nil && err != errors.ErrNotFound {
+		return err
+	}
+
+	item.StatusCode = param.statusCode
+	body, err := proto.Marshal(item)
+	if err != nil {
+		return err
+	}
+	return db.DB().Put(a.idToKey(item.GetId()), body, nil)
 }
 
 // Put ...
@@ -107,7 +122,7 @@ func (a *Form) Del(id int32) error {
 }
 
 // Range ...
-func (a *Form) Range() (dq []*pb_item.Item) {
+func (a *Form) Range(param *param) (dq []*pb_item.Item) {
 	dq = make([]*pb_item.Item, 0)
 
 	it := db.DB().NewIterator(&util.Range{Start: []byte(db.PKForm), Limit: []byte(db.PKForm + "Z")}, nil)
@@ -120,6 +135,10 @@ func (a *Form) Range() (dq []*pb_item.Item) {
 			)
 
 			if err := proto.Unmarshal(it.Value(), &item); err != nil {
+				continue
+			}
+
+			if param != nil && param.statusCode >= 0 && param.statusCode != item.GetStatusCode() {
 				continue
 			}
 

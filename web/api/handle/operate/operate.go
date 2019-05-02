@@ -126,10 +126,12 @@ func (a *Operate) opForm(param *param) ([]byte, error) {
 		obj, err = a.form.Get(param.id)
 	case "put":
 		err = a.form.Put(param)
+	case "updateStatus":
+		err = a.form.UpdateStatus(param)
 	case "del":
 		err = a.form.Del(param.id)
 	case "range":
-		obj = a.form.Range()
+		obj = a.form.Range(param)
 	default:
 		err = fmt.Errorf("op err, candidate[get, put, del, range]")
 	}

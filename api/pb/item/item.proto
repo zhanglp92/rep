@@ -26,6 +26,8 @@ message Item {
     google.protobuf.Timestamp update_time = 17;
     string screate = 18;
     string supdate = 19;
+    string status = 20;
+    int32 status_code = 21;
 }
 
 message DQ {
