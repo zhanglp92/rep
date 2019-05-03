@@ -31,325 +31,334 @@
         width: 100%;
     }
 
+    .modal-title {
+        text-align: center;
+    }
+
     .like {
         margin-right: 10px;
     }
 </style>
 
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
-    data-whatever="@mdo">新增客户</button>
+<body>
 
-<a href="/rep/api/v1/display">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-whatever="@mdo">订单信息</button>
-</a>
+    <h1 class="modal-title" id="exampleModalLabel">用户信息</h1>
 
-<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">新增用户</h5>
-            </div>
-            <div class="modal-body">
-                <form id="form-adduser" action="/rep/api/v1/op" method="POST">
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">姓名：</label>
-                        <input type="text" class="form-control" name="u-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">性别：</label>
-                        男：<input type="radio" checked="checked" name="u-sex" value="男" />
-                        女：<input type="radio" name="u-sex" value="女" />
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">电话：</label>
-                        <input type="text" class="form-control" name="u-phone">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-control-label">地址：</label>
-                        <input type="text" class="form-control" name="u-addr">
-                    </div>
-                    <div class="form-group">
-                        <label for="message-text" class="form-control-label">备注：</label>
-                        <textarea class="form-control" name="u-remark"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="addUser()">保存</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adduser"
+        data-whatever="@mdo">新增客户</button>
+
+    <a href="/rep/api/v1/display">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-whatever="@mdo">订单信息</button>
+    </a>
+
+    <div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增用户</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form-adduser" action="/rep/api/v1/op" method="POST">
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">姓名：</label>
+                            <input type="text" class="form-control" name="u-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">性别：</label>
+                            男：<input type="radio" checked="checked" name="u-sex" value="男" />
+                            女：<input type="radio" name="u-sex" value="女" />
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">电话：</label>
+                            <input type="text" class="form-control" name="u-phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="form-control-label">地址：</label>
+                            <input type="text" class="form-control" name="u-addr">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="form-control-label">备注：</label>
+                            <textarea class="form-control" name="u-remark"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addUser()">保存</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<table id="mytab" class="table-hover"></table>
+    <table id="mytab" class="table-hover"></table>
 
-<script>
+    <script>
 
-    function addUser() {
-        var form_adduser = document.getElementById('form-adduser')
+        function addUser() {
+            var form_adduser = document.getElementById('form-adduser')
 
-        var newElement = document.createElement("input")
-        newElement.setAttribute("type", "hidden")
-        newElement.name = "type"
-        newElement.value = "user"
-        form_adduser.appendChild(newElement)
+            var newElement = document.createElement("input")
+            newElement.setAttribute("type", "hidden")
+            newElement.name = "type"
+            newElement.value = "user"
+            form_adduser.appendChild(newElement)
 
-        var newElement = document.createElement("input")
-        newElement.setAttribute("type", "hidden")
-        newElement.name = "op"
-        newElement.value = "put"
-        form_adduser.appendChild(newElement)
+            var newElement = document.createElement("input")
+            newElement.setAttribute("type", "hidden")
+            newElement.name = "op"
+            newElement.value = "put"
+            form_adduser.appendChild(newElement)
 
-        form_adduser.submit()
-    }
-
-
-
-    $('#mytab').bootstrapTable({
-        url: '/rep/api/v1/op?type=user&op=range',
-
-        uniqueId: "id",
-        striped: true,      //是否显示行间隔色
-        cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-        pagination: true,     //是否显示分页（*）
-        sortable: true,      //是否启用排序
-        sortOrder: "id asc",     //排序方式
-        pageNumber: 1,      //初始化加载第一页，默认第一页
-        pageSize: 12,      //每页的记录行数（*）
-        pageList: [20, 50, 100, 150, 'all'],  //可供选择的每页的行数（*）
-        queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
-        //queryParams: queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
-        showColumns: true, //是否显示所有的列
-        // showRefresh: true, //是否显示刷新按钮
-        minimumCountColumns: 0,    //最少允许的列数
-        // clickToSelect: true,    //是否启用点击选中行
-        search: true, //是否显示表格搜索
-        // strictSearch: true, // 严格搜索
-        showExport: true,
-        // clickEdit: true,
-        showPaginationSwitch: true,
-
-        // searchAlign: "left",//查询框对齐方式
-        // buttonsAlign: "left",//按钮对齐方式
-        searchOnEnterKey: true,//回车搜索
-        toolbar: "#toolbar",//指定工具栏
-        toolbarAlign: "right",//工具栏对齐方式,
-        striped: true,                      //是否显示行间隔色(斑马线)
-        paginationLoop: false,
-
-        showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
-        cardView: false,                    //是否显示详细视图
-        detailView: false,                  //是否显示父子表
+            form_adduser.submit()
+        }
 
 
-        showExport: phoneOrPc(),              //是否显示导出按钮(此方法是自己写的目的是判断终端是电脑还是手机,电脑则返回true,手机返回falsee,手机不显示按钮)
-        exportDataType: "selected",              //basic', 'all', 'selected'.
-        exportTypes: ['xlsx'],	    //导出类型
-        //exportButton: $('#btn_export'),     //为按钮btn_export  绑定导出事件  自定义导出按钮(可以不用)
-        exportOptions: {
-            //ignoreColumn: [0,0],            //忽略某一列的索引  
-            fileName: '思诺宜家',              //文件名称设置  
-            worksheetName: 'Sheet1',          //表格工作区名称  
-            tableName: '订单',
-            excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
-            //onMsoNumberFormat: DoOnMsoNumberFormat  
-        },
-        //导出excel表格设置<<<<<<<<<<<<<<<<
 
-        onLoadSuccess: function () {  //加载成功时执行
-            console.info("加载成功");
-        },
-        onLoadError: function () {  //加载失败时执行
-            console.info("加载数据失败");
-        },
+        $('#mytab').bootstrapTable({
+            url: '/rep/api/v1/op?type=user&op=range',
 
-        onClickCell: function (field, value, row, $element) {
-            if (constField[field]) {
-                return
-            }
+            uniqueId: "id",
+            striped: true,      //是否显示行间隔色
+            cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,     //是否显示分页（*）
+            sortable: true,      //是否启用排序
+            sortOrder: "id asc",     //排序方式
+            pageNumber: 1,      //初始化加载第一页，默认第一页
+            pageSize: 12,      //每页的记录行数（*）
+            pageList: [20, 50, 100, 150, 'all'],  //可供选择的每页的行数（*）
+            queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
+            //queryParams: queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
+            showColumns: true, //是否显示所有的列
+            // showRefresh: true, //是否显示刷新按钮
+            minimumCountColumns: 0,    //最少允许的列数
+            // clickToSelect: true,    //是否启用点击选中行
+            search: true, //是否显示表格搜索
+            // strictSearch: true, // 严格搜索
+            showExport: true,
+            // clickEdit: true,
+            showPaginationSwitch: true,
 
-            $element.attr('contenteditable', true);
-            $element.blur(function () {
-                let newValue = $element.html();
-                if (value == newValue) {
+            // searchAlign: "left",//查询框对齐方式
+            // buttonsAlign: "left",//按钮对齐方式
+            searchOnEnterKey: true,//回车搜索
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式,
+            striped: true,                      //是否显示行间隔色(斑马线)
+            paginationLoop: false,
+
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+
+
+            showExport: phoneOrPc(),              //是否显示导出按钮(此方法是自己写的目的是判断终端是电脑还是手机,电脑则返回true,手机返回falsee,手机不显示按钮)
+            exportDataType: "selected",              //basic', 'all', 'selected'.
+            exportTypes: ['xlsx'],	    //导出类型
+            //exportButton: $('#btn_export'),     //为按钮btn_export  绑定导出事件  自定义导出按钮(可以不用)
+            exportOptions: {
+                //ignoreColumn: [0,0],            //忽略某一列的索引  
+                fileName: '思诺宜家',              //文件名称设置  
+                worksheetName: 'Sheet1',          //表格工作区名称  
+                tableName: '订单',
+                excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+                //onMsoNumberFormat: DoOnMsoNumberFormat  
+            },
+            //导出excel表格设置<<<<<<<<<<<<<<<<
+
+            onLoadSuccess: function () {  //加载成功时执行
+                console.info("加载成功");
+            },
+            onLoadError: function () {  //加载失败时执行
+                console.info("加载数据失败");
+            },
+
+            onClickCell: function (field, value, row, $element) {
+                if (constField[field]) {
                     return
                 }
-                modifyForm(field, newValue, row)
-            });
-        },
 
-        columns: [
-            {
-                checkbox: true
+                $element.attr('contenteditable', true);
+                $element.blur(function () {
+                    let newValue = $element.html();
+                    if (value == newValue) {
+                        return
+                    }
+                    modifyForm(field, newValue, row)
+                });
             },
-            {
-                title: 'ID',
-                field: 'id',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-                visible: false,
-            },
-            {
-                title: '姓名',
-                field: 'name',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                title: '性别',
-                field: 'sex',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                title: '电话',
-                field: 'phone',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                title: '地址',
-                field: 'addr',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'remark',
-                title: '备注',
-            },
-            {
-                field: 'screate',
-                title: '创建时间',
-                align: "center",
-                valign: "middle",
-                sortable: true,
-            },
-            {
-                field: 'op', title: '操作', align: 'center', valign: 'middle',
-                formatter: operation,
+
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    title: 'ID',
+                    field: 'id',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                    visible: false,
+                },
+                {
+                    title: '姓名',
+                    field: 'name',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                },
+                {
+                    title: '性别',
+                    field: 'sex',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                },
+                {
+                    title: '电话',
+                    field: 'phone',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                },
+                {
+                    title: '地址',
+                    field: 'addr',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                },
+                {
+                    field: 'remark',
+                    title: '备注',
+                },
+                {
+                    field: 'screate',
+                    title: '创建时间',
+                    align: "center",
+                    valign: "middle",
+                    sortable: true,
+                },
+                {
+                    field: 'op', title: '操作', align: 'center', valign: 'middle',
+                    formatter: operation,
+                }
+            ],
+        });
+
+        /*判断终端是手机还是电脑--用于判断文件是否导出(电脑需要导出)*/
+        function phoneOrPc() {
+            var sUserAgent = navigator.userAgent.toLowerCase();
+            var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+            var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+            var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+            var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+            var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+            var bIsAndroid = sUserAgent.match(/android/i) == "android";
+            var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+            var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+            if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+                return false;
+            } else {
+                return true;
             }
-        ],
-    });
-
-    /*判断终端是手机还是电脑--用于判断文件是否导出(电脑需要导出)*/
-    function phoneOrPc() {
-        var sUserAgent = navigator.userAgent.toLowerCase();
-        var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
-        var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
-        var bIsMidp = sUserAgent.match(/midp/i) == "midp";
-        var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
-        var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
-        var bIsAndroid = sUserAgent.match(/android/i) == "android";
-        var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
-        var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
-        if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function operation(value, row, index) {
-        return '<a onclick="del(this)" href="#" class="btn btn-info" phone="'+ row["phone"] + '">删除</a>'
-    }
-
-    function del(e) {
-        var phone = e.getAttribute("phone")
-        if (phone == undefined) {
-            url = "/rep/api/v1/op?type=user&op=del"
-        } else {
-            url = "/rep/api/v1/op?type=user&op=del&phone=" + phone
         }
 
-        $.ajax({
-            url: url,
-            success: function (data, status) {
-                if (status !== "success") {
+        function operation(value, row, index) {
+            return '<a onclick="del(this)" href="#" class="btn btn-info" phone="' + row["phone"] + '">删除</a>'
+        }
+
+        function del(e) {
+            var phone = e.getAttribute("phone")
+            if (phone == undefined) {
+                url = "/rep/api/v1/op?type=user&op=del"
+            } else {
+                url = "/rep/api/v1/op?type=user&op=del&phone=" + phone
+            }
+
+            $.ajax({
+                url: url,
+                success: function (data, status) {
+                    if (status !== "success") {
+                        alert(data)
+                    } else {
+                        alert("删除成功")
+                    }
+                },
+                error: function (data) {
                     alert(data)
-                } else {
-                    alert("删除成功")
                 }
-            },
-            error: function (data) {
-                alert(data)
-            }
-        })
+            })
 
-        window.location.reload()
-    }
-
-    function getUserInfo(id) {
-        url = "/rep/api/v1/op?type=user&op=get&phone=" + id
-        $.ajax({
-            url: url,
-            success: function (data) {
-                alert(data)
-            },
-            error: function (data) {
-                alert(data)
-            }
-        })
-    }
-
-    var constField = {
-        "username": true, "phone": true, "screate": true, "supdate": true
-    }
-
-    var fieldTy = {
-        "id": "int",
-        "userid": "int",
-        "type": "string",
-        "colour": "string",
-        "opendirection": "string",
-        "size": "string",
-        "shape": "string",
-        "squaremeter": "float",
-        "priceunit": "float",
-        "priceset": "float",
-        "price": "float",
-        "remarks": "string",
-    }
-
-    function toType(field, value) {
-        switch (fieldTy[field]) {
-            case "int":
-                return parseInt(value)
-            case "string":
-                return value
-            case "float":
-                return parseFloat(value)
+            window.location.reload()
         }
-        return value
-    }
 
-    function modifyForm(field, newValue, row) {
-        row[field] = toType(field, newValue)
-        $.post(
-            "/rep/api/v1/op",
-            { "type": "form", "op": "put", "obj": JSON.stringify(row) },
-            function (data, status) {
-                if (status != "success") {
-                    alert("添加失败:" + JSON.stringify(data))
+        function getUserInfo(id) {
+            url = "/rep/api/v1/op?type=user&op=get&phone=" + id
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    alert(data)
+                },
+                error: function (data) {
+                    alert(data)
                 }
+            })
+        }
+
+        var constField = {
+            "username": true, "phone": true, "screate": true, "supdate": true
+        }
+
+        var fieldTy = {
+            "id": "int",
+            "userid": "int",
+            "type": "string",
+            "colour": "string",
+            "opendirection": "string",
+            "size": "string",
+            "shape": "string",
+            "squaremeter": "float",
+            "priceunit": "float",
+            "priceset": "float",
+            "price": "float",
+            "remarks": "string",
+        }
+
+        function toType(field, value) {
+            switch (fieldTy[field]) {
+                case "int":
+                    return parseInt(value)
+                case "string":
+                    return value
+                case "float":
+                    return parseFloat(value)
             }
-        )
+            return value
+        }
 
-        window.location.reload()
-    }
+        function modifyForm(field, newValue, row) {
+            row[field] = toType(field, newValue)
+            $.post(
+                "/rep/api/v1/op",
+                { "type": "form", "op": "put", "obj": JSON.stringify(row) },
+                function (data, status) {
+                    if (status != "success") {
+                        alert("添加失败:" + JSON.stringify(data))
+                    }
+                }
+            )
 
-    function addform() {
-        alert("addform")
-    }
+            window.location.reload()
+        }
 
-</script>
+        function addform() {
+            alert("addform")
+        }
+
+    </script>
 </body>
 
 </html>

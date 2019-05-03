@@ -18,10 +18,10 @@
     <script src="/rep/lib/bootstrap-paginator/src/bootstrap-paginator.js"></script>
     <script src="/rep/lib/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js"></script>
     <script src="/rep/lib/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
-    <script src="/rep/lib/bootstrap-table/dist/extensions/export/bootstrap-table-export.js"></script>
-    <script src="/rep/lib/tableExport.jquery.plugin/tableExport.min.js"></script>
+    <script src="/rep/lib/tableExport.jquery.plugin/tableExport.1.js"></script>
     <script src="/rep/lib/tableExport.jquery.plugin/libs/js-xlsx/xlsx.core.min.js"></script>
     <script src="/rep/lib/tableExport.jquery.plugin/libs/FileSaver/FileSaver.min.js"></script>
+    <script src="/rep/lib/bootstrap-table/dist/extensions/export/bootstrap-table-export.js"></script>
     <script src="/rep/lib/js/input-autocomplete.js"></script>
 
     <style>
@@ -62,13 +62,30 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-whatever="@mdo">客户信息</button>
         </a>
 
-        <select id="select_status" class="btn btn-primary"></select>
+        <select id="select_status" class="btn btn-primary" style="height:34px"></select>
+
     </dev>
 
     <table id="mytab" class="table-hover"></table>
 
 
     <script>
+
+        var codeStatus = ["待制作", "制作中", "待发货", "已发货", "待收款", "已完成"]
+        function initStatus() {
+            var obj = $("#select_status")
+            obj.append("<option value=\"" + -1 + "\">全部</option>");
+            for (var i = 0; i < codeStatus.length; i++) {
+                if (i == 0) {
+                    obj.append("<option value=\"" + i + "\" selected=\"selected\">" + codeStatus[i] + "</option>");
+                } else {
+                    obj.append("<option value=\"" + i + "\">" + codeStatus[i] + "</option>");
+                }
+            }
+        }
+        initStatus()
+
+
 
         $('#mytab').bootstrapTable({
             url: '/rep/api/v1/op?type=form&op=range',
@@ -95,13 +112,12 @@
             showPaginationSwitch: true,
 
             // searchAlign: "left",//查询框对齐方式
-            // buttonsAlign: "left",//按钮对齐方式
+            buttonsAlign: "left",//按钮对齐方式
             searchOnEnterKey: true,//回车搜索
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式,
             striped: true,                      //是否显示行间隔色(斑马线)
             paginationLoop: false,
-
             showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
             cardView: false,                    //是否显示详细视图
             detailView: false,                  //是否显示父子表
@@ -109,16 +125,19 @@
 
             showExport: phoneOrPc(),              //是否显示导出按钮(此方法是自己写的目的是判断终端是电脑还是手机,电脑则返回true,手机返回false,手机不显示按钮)
             exportDataType: "selected",              //basic', 'all', 'selected'.
-            exportTypes: ['xlsx'],	    //导出类型
-            //exportButton: $('#btn_export'),     //为按钮btn_export  绑定导出事件  自定义导出按钮(可以不用)
+            // exportTypes: ['xlsx'],	    //导出类型
+            exportButton: $('#exportBtn'),     //为按钮btn_export  绑定导出事件  自定义导出按钮(可以不用)
             exportOptions: {
-                ignoreColumn: [0, 1],            //忽略某一列的索引  
+                ignoreColumn: [0],            //忽略某一列的索引  
                 fileName: '思诺宜家',              //文件名称设置  
                 worksheetName: 'Sheet1',          //表格工作区名称  
                 tableName: '订单',
                 excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
                 pageFormat: 'a4',
                 onMsoNumberFormat: DoOnMsoNumberFormat,
+                extExcelHeader: ExtExcelHeader,
+                extExcelDo: ExtExcelDo,
+                extExcelTail: ExtExcelTail,
             },
             //导出excel表格设置<<<<<<<<<<<<<<<<
 
@@ -154,6 +173,7 @@
                     align: "center",
                     valign: "middle",
                     sortable: true,
+                    visible: false,
                 },
                 {
                     title: '客户',
@@ -256,6 +276,7 @@
                     align: "center",
                     valign: "middle",
                     sortable: true,
+                    visible: false,
                 },
                 {
                     field: 'screate',
@@ -263,18 +284,105 @@
                     align: "center",
                     valign: "middle",
                     sortable: true,
+                    visible: false,
                 },
                 {
                     field: 'op', title: '操作', align: 'center', valign: 'middle',
                     formatter: operation,
+                    visible: false,
                 },
                 {
                     field: 'opStatus', title: '修改状态', align: 'center', valign: 'middle',
                     formatter: opStatus,
+                    visible: false,
                 }
             ],
         });
 
+        var tableHeader = '思诺宜家销售单';
+        function ExtExcelHeader(colNum) {
+            var out = '<tr><th style="color:rgb(0, 0, 0);font-size:32px;font-weight:700" colspan="' + colNum + '" rowspan="1">' + tableHeader + '</th></tr>';
+            out += '<tr></tr>'
+            return out
+        }
+
+        // 处理数据
+        function ExtExcelDo($extData, row, col, tdvalue) {
+            console.log(row + col + tdvalue);
+
+            if (row === 0) {
+                if (!$extData.hasOwnProperty("pos")) {
+                    $extData["pos"] = {};
+                }
+                if (tdvalue == "客户") {
+                    $extData["pos"]["0"] = col;
+                }
+                if (tdvalue == "电话") {
+                    $extData["pos"]["1"] = col;
+                }
+                if (tdvalue == "合计(￥)") {
+                    $extData["pos"]["2"] = col;
+                }
+                return;
+            }
+
+            if (!$extData.hasOwnProperty("data")) {
+                $extData["data"] = {}
+            }
+            if (!$extData["data"].hasOwnProperty(row)) {
+                $extData["data"][row] = []
+            }
+            $extData["data"][row][col] = tdvalue;
+        }
+
+        function ExtExcelTail($extData, colNum) {
+            var sumPrice = 0.0;
+            var user = {};
+
+            for (var row in $extData["data"]) {
+                var name = $extData["data"][row][$extData["pos"]["0"]];
+                var phone = $extData["data"][row][$extData["pos"]["1"]];
+
+                user[name] = phone;
+                sumPrice += Number($extData["data"][row][$extData["pos"]["2"]]);
+            }
+
+            var out = '<tr></tr><tr></tr>';
+            for (var name in user) {
+                out += '<tr>';
+                out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">客户:</th>';
+                out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">' + name + '</th>';
+                out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">电话:</th>';
+                out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">' + user[name] + '</th>';
+                out += '</tr>';
+            }
+            out += '<tr></tr>';
+
+            var beizhuPos = $extData["pos"]["2"] - 1
+            if (beizhuPos < 0) {
+                beizhuPos = 0
+            }
+
+            out += '<tr>';
+            for (var pos = 0; pos < beizhuPos; pos++) {
+                out += '<th></th>';
+            }
+            out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">合计:</th>';
+            out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">￥' + sumPrice + '</th>';
+            out += '</tr>';
+
+
+            out += '<tr>';
+            for (var pos = 0; pos < beizhuPos; pos++) {
+                out += '<th></th>';
+            }
+            var now = new Date();
+            out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">接单日期:</th>';
+            out += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">' + now.toLocaleString() + '</th>';
+            out += '</tr>';
+
+            return out;
+        }
 
         function DoOnMsoNumberFormat(cell, row, col) {
 
@@ -331,18 +439,6 @@
         function operation(value, row, index) {
             return '<a href="#" class="btn btn-info" onclick="del(this)" data-id="' + row["id"] + '")">删除</a>'
         }
-
-
-        var codeStatus = ["待制作", "制作中", "待发货", "已发货", "待收款", "已完成"]
-
-        function initStatus() {
-            var obj = $("#select_status")
-            obj.append("<option value=\"" + -1 + "\">全部</option>");
-            for (var i = 0; i < codeStatus.length; i++) {
-                obj.append("<option value=\"" + i + "\">" + codeStatus[i] + "</option>");
-            }
-        }
-        initStatus()
 
         function opStatus(value, row, index) {
             var n = 0;
