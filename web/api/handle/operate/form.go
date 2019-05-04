@@ -238,7 +238,7 @@ func (a *Form) itemAdjust(item *pb_item.Item) *pb_item.Item {
 
 func (a *Form) calPrice(item *pb_item.Item) {
 	// 按套计算总价
-	if item.GetPriceset() > 0 {
+	if item.GetPriceset() > 1e-4 {
 		item.Price = item.GetPriceset()
 		return
 	}
@@ -250,7 +250,7 @@ func (a *Form) calPrice(item *pb_item.Item) {
 	}
 
 	// 平方米 * 单价 = 总价
-	if item.GetPriceunit() <= 0 {
+	if item.GetPriceunit() < 1e-4 {
 		return
 	}
 

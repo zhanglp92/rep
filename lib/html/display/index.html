@@ -138,6 +138,7 @@
                 extExcelHeader: ExtExcelHeader,
                 extExcelDo: ExtExcelDo,
                 extExcelTail: ExtExcelTail,
+                extExcelDocData: ExtExcelDocData,
             },
             //导出excel表格设置<<<<<<<<<<<<<<<<
 
@@ -301,14 +302,15 @@
 
         var tableHeader = '思诺宜家销售单';
         function ExtExcelHeader(colNum) {
-            var out = '<tr><th style="color:rgb(0, 0, 0);font-size:32px;font-weight:700" colspan="' + colNum + '" rowspan="1">' + tableHeader + '</th></tr>';
-            out += '<tr></tr>'
+            var out = '<tr><th style="color:rgb(0, 0, 0);font-size:38px;font-weight:700" colspan="' + colNum + '" rowspan="1">' + tableHeader + '</th></tr>';
             return out
         }
 
         // 处理数据
         function ExtExcelDo($extData, row, col, tdvalue) {
-            console.log(row + col + tdvalue);
+            if (!$extData.hasOwnProperty("header")) {
+                $extData["header"] = [];
+            }
 
             if (row === 0) {
                 if (!$extData.hasOwnProperty("pos")) {
@@ -323,6 +325,9 @@
                 if (tdvalue == "合计(￥)") {
                     $extData["pos"]["2"] = col;
                 }
+
+                $extData["header"].push(tdvalue);
+
                 return;
             }
 
@@ -382,6 +387,123 @@
             out += '</tr>';
 
             return out;
+        }
+
+        // 自定义生成docdata(去掉 客户电话两列)
+        function ExtExcelDocData($extData) {
+            var user = { "price": 0.0, "data": {} };
+            var docData = '';
+            var header = '';
+            var colNum = 1; // 多一行ID
+            var beizhuPos = 0;
+            var beizhuPosInit = 0;
+            var beizhuSpace = '';
+            var dataCnt = 0;
+            var now = new Date();
+
+
+            for (var idx in $extData["data"]) {
+                var row = $extData["data"][idx];
+
+                var name = row[$extData["pos"]["0"]];
+                if (!user["data"].hasOwnProperty(name)) {
+                    user["data"][name] = { "price": 0.0, "data": [] };
+                    dataCnt += 1;
+                }
+
+                var line = [];
+                for (var i = 0; i < row.length; i++) {
+                    if (i == $extData["pos"]["0"]) {
+                        continue;
+                    } else if (i == $extData["pos"]["1"]) {
+                        user["data"][name]["phone"] = row[i];
+                        continue;
+                    } else if (i == $extData["pos"]["2"]) {
+                        user["data"][name]["price"] += Number(row[i]);
+                        user["price"] += Number(row[i]);
+                    }
+
+                    if (beizhuPosInit == 0 && i < $extData["pos"]["2"]) {
+                        beizhuPos += 1;
+                    }
+
+                    line.push(row[i]);
+                }
+                user["data"][name]["data"].push(line);
+                beizhuPosInit += 1;
+            }
+
+            for (var pos = 0; pos < beizhuPos; pos++) {
+                beizhuSpace += '<th></th>';
+            }
+
+            // 获取头部列表
+            header += '<tr><th>序号</th>';
+            for (var i = 0; i < $extData["header"].length; i++) {
+                if (i == $extData["pos"]["0"]) {
+                    continue;
+                } else if (i == $extData["pos"]["1"]) {
+                    continue;
+                }
+                colNum += 1;
+
+                header += '<th>' + $extData["header"][i] + '</th>';
+            }
+            header += '</tr>';
+
+            // 打印表格
+            docData += '<table><thead>';
+
+            // 打印头部
+            docData += ExtExcelHeader(colNum);
+
+            // 打印消息体
+            for (var name in user["data"]) {
+                var people = user["data"][name];
+
+                docData += '<tr></tr><tr><th></th>';
+                docData += '<th style="font-size:20px;">客户:</th>';
+                docData += '<th style="font-size:20px;">' + name + '</th>';
+                docData += '<th style="font-size:20px;">电话:</th>';
+                docData += '<th style="font-size:20px;">' + people["phone"] + '</th>';
+                docData += '</tr>';
+                docData += header;
+                
+                var datanum = 0;
+                people["data"].forEach(line => {
+                    datanum += 1;
+
+                    docData += '<tr><th>' + datanum + '</th>';
+                    line.forEach(value => { docData += '<th>' + value + '</th>' });
+                    docData += '</tr>';
+                });
+
+                if (dataCnt > 1) {
+                    // 合计
+                    docData += '<tr>' + beizhuSpace;
+                    docData += '<th>合计:</th>';
+                    docData += '<th>￥' + people["price"] + '</th>';
+                    docData += '</tr>';
+                }
+            }
+
+            // 总计
+            docData += '<tr></tr><tr>' + beizhuSpace;
+            docData += '<th>总计:</th>';
+            docData += '<th>￥' + user["price"] + '</th>';
+            docData += '</tr>';
+
+            // 日期
+            docData += '<tr>' + beizhuSpace;
+            docData += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">接单日期:</th>';
+            docData += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">' + now.toLocaleString() + '</th>';
+            docData += '</tr>';
+
+            docData += '</table></thead>';
+
+            // vv.push();
+
+            return docData;
         }
 
         function DoOnMsoNumberFormat(cell, row, col) {
