@@ -85,8 +85,6 @@
         }
         initStatus()
 
-
-
         $('#mytab').bootstrapTable({
             url: '/rep/api/v1/op?type=form&op=range',
 
@@ -308,6 +306,7 @@
 
         // 处理数据
         function ExtExcelDo($extData, row, col, tdvalue) {
+
             if (!$extData.hasOwnProperty("header")) {
                 $extData["header"] = [];
             }
@@ -338,6 +337,8 @@
                 $extData["data"][row] = []
             }
             $extData["data"][row][col] = tdvalue;
+
+
         }
 
         function ExtExcelTail($extData, colNum) {
@@ -468,7 +469,7 @@
                 docData += '<th style="font-size:20px;">' + people["phone"] + '</th>';
                 docData += '</tr>';
                 docData += header;
-                
+
                 var datanum = 0;
                 people["data"].forEach(line => {
                     datanum += 1;
@@ -493,15 +494,18 @@
             docData += '<th>￥' + user["price"] + '</th>';
             docData += '</tr>';
 
+            var nowDate = '<th></th><th style="font-size:20px;">厂办电话:</th><th style="font-size:20px;">15829551965</th>'
+            for (var pos = 3; pos < beizhuPos; pos++) {
+                nowDate += '<th></th>';
+            }
+
             // 日期
-            docData += '<tr>' + beizhuSpace;
+            docData += '<tr>' + nowDate;
             docData += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">接单日期:</th>';
             docData += '<th style="color:rgb(0, 0, 0);font-size:13px;font-weight:700;" colspan="1" rowspan="1">' + now.toLocaleString() + '</th>';
             docData += '</tr>';
 
             docData += '</table></thead>';
-
-            // vv.push();
 
             return docData;
         }
